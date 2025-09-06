@@ -82,8 +82,6 @@ Debian/Ubuntu e.g.
 
 	sudo apt install inotifywait
 
-Install it from your System Repository.
-
 </details>
 
 <details>
