@@ -14,14 +14,20 @@ common_reply=1
 ######### Watch a directory for new files ##########
 ####################################################
 watcher=1
-watchdir="/ABSOLUTE/SYSTEM/PATH/TO/YOUR/DIRECTORY"
+watchdir="/ABSOLUTE/SYSTEM/PATH/TO/FOLDER"
 ####################################################
 
 ####################################################
 #################### GPT Stuff #####################
 ####################################################
 gpt_autostart=yes
-gemini_key="PUT YOUR FREE GEMINI API KEY HERE"
+gemini_key="FREE_GEMINI_API_KEY"
+####################################################
+
+####################################################
+################# Image Uplaod #####################
+####################################################
+imgbb_key="FREE_IMGBB_API_KEY"
 ####################################################
 
 ####################################################
@@ -211,6 +217,23 @@ function rssfeed_off {
   sed -i '0,/.*rssfeed=.*/ s/.*rssfeed=.*/rssfeed=0/g' wirebot.sh
 }
 
+function imgbb_upload {
+	
+	IMAGE_B64=$(base64 -w 0 "picture.jpg")
+	
+	RESPONSE=$(curl -s -X POST \
+	  -F "key=$imgbb_key" \
+	  -F "image=$IMAGE_B64" \
+	  https://api.imgbb.com/1/upload)
+	
+	URL=$(echo "$RESPONSE" | grep -oP '"url":"\K[^"]+')
+	
+	if [[ -n "$URL" ]]; then
+		imgbb_url=$( echo "$URL" | head -n 1 | sed 's/\\//g' )
+	fi
+
+}
+
 function tgpt {
 
 if [[ "$command" = "#"* ]]; then
@@ -235,8 +258,10 @@ if [[ "$command" = "#"* ]]; then
     	rm 01991*.jpg
     	exit
 	  fi
-	  imgur_url=$( ./imgur.sh picture.jpg )
-	  say=$( echo "<img src=\"$imgur_url\"></img>" )
+
+	  imgbb_upload
+
+	  say=$( echo "<img src=\"$imgbb_url\"></img>" )
 	  rm picture.jpg > /dev/null
 	  print_msg
 	  exit
