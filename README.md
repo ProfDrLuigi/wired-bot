@@ -78,6 +78,10 @@ If you don't need this feature you can disable it by typing
 
 	inotifywait
 
+Debian/Ubuntu e.g.
+
+	sudo apt install inotifywait
+
 Install it from your System Repository.
 
 </details>
