@@ -227,7 +227,6 @@ if [[ "$command" = "#"* ]]; then
 	  <u>Reset conversation</u><span style=\"font-family:Courier\"><br>#reset conversation</span></br><br> \
 	  <u>Memes</u><span style=\"font-family:Courier\"><br>:hi: | :wow:</span></n>"
 	  print_msg
-	  echo "$command" > /tmp/yo
 	  exit
 	
 	elif [[ "$command" = "#p"* ]]; then
@@ -235,10 +234,12 @@ if [[ "$command" = "#"* ]]; then
 	  if ! ./tgpt --provider pollinations --model flux --img --out picture.jpg --height 320 --width 320 "$conversation"; then
     	say="Error creating Image. Trying another Provider (arta)... ⏱️"
     	print_msg
-    	arta_url=$(echo "n" | ./tgpt --provider arta --img "$conversation" | grep -Eo 'https?://[^ ]+')
-    	say=$( echo "Image is too big. Here the direct link: " "$arta_url" )
-    	print_msg
-    	rm 01991*.jpg
+    	echo "y" | ./tgpt --provider arta --img "$conversation"
+    	mv 0199* picture.jpg
+    	imgbb_url=$( curl -s -X POST -F "key=$imgbb_key" -F "image=@picture.jpg" https://api.imgbb.com/1/upload | grep -oP '"url":"\K[^"]+' | tail -n2 | head -n1 | sed 's/\\//g' )
+    	say=$( echo "<img src=\"$imgbb_url\"></img>" )
+	    rm picture.jpg > /dev/null
+	    print_msg
     	exit
 	  fi
 
@@ -354,106 +355,102 @@ function admin {
 
 # Check if user has admin rights
 if [[ "$command" = \!* ]]; then  
-  if [[ "$admin_user" == *"$login"* ]]; then
-    allowed=1
-  else
-    allowed=0
+  if [[ "$admin_user" != "$login" ]]; then
     say="🚫 You are not allowed to do this $nick 🚫"
     print_msg
     exit
   fi
 fi
 
-if [ "$allowed" = 1 ]; then
-  if [ "$command" = "!" ]; then
-    say="⛔ This command is not valid. ⛔"
+if [ "$command" = "!" ]; then
+  say="⛔ This command is not valid ⛔"
+  print_msg
+fi
+if [ "$command" = "!sleep" ]; then
+  answ[0]="💤"
+  answ[1]=":sleeping: … Time for a nap."
+  rnd_answer
+  say="/afk"
+  print_msg
+fi
+if [ "$command" = "!start" ]; then
+  answ[0]="Yes, my lord."
+  answ[1]="I need more blood.👺"
+  answ[2]="Ready to serve.👽"
+  rnd_answer
+fi
+if [ "$command" = "!stop" ]; then
+  answ[0]="Ping me when you need me. 🙂"
+  answ[1]="I jump ❗"
+  rnd_answer
+  say="/afk"
+  print_msg
+  touch wirebot.stop
+fi
+if [ "$command" = "!gpt start" ]; then
+  if screen -ls | grep "tgpt"; then
+    say="tgpt already running"
     print_msg
+    exit 0
   fi
-  if [ "$command" = "!sleep" ]; then
-    answ[0]="💤"
-    answ[1]=":sleeping: … Time for a nap."
-    rnd_answer
-    say="/afk"
-    print_msg
-  fi
+  answ[0]="Ping me when you need me. 🙂"
+  answ[1]="I jump ❗"
+  rnd_answer
+  tgpt_start
+fi 
+if [ "$command" = "!gpt stop" ]; then
+  answ[0]="Ping me when you need me. 🙂"
+  answ[1]="I jump ❗"
+  rnd_answer
+  tgpt_stop
+fi 
+if [ "$command" = "!gpt restart" ]; then
+  answ[0]="Yes sir. 🙂"
+  answ[1]="I will do that ❗"
+  rnd_answer
+  rm gpt.busy
+  tgpt_stop
+  tgpt_start
+fi
+
+if [ "$command" = "!userjoin on" ]; then
+  user_join_on
+fi
+if [ "$command" = "!userjoin off" ]; then
+  user_join_off
+fi  
+if [ "$command" = "!userleave on" ]; then
+  user_leave_on
+fi
+if [ "$command" = "!userleave off" ]; then
+  user_leave_off
+fi 
+
+if [ "$command" = "!kill_screen" ]; then
+  say="Cya."
+  kill_screen
+fi
+
+if [ -f wirebot.stop ]; then
   if [ "$command" = "!start" ]; then
-    answ[0]="Yes, my lord."
-    answ[1]="I need more blood.👺"
-    answ[2]="Ready to serve.👽"
-    rnd_answer
-  fi
-  if [ "$command" = "!stop" ]; then
-    answ[0]="Ping me when you need me. 🙂"
-    answ[1]="I jump ❗"
-    rnd_answer
+    rm wirebot.stop
+  elif [ "$command" = "!stop" ]; then
     say="/afk"
     print_msg
-    touch wirebot.stop
+    exit
+  else
+    exit
   fi
-  if [ "$command" = "!gpt start" ]; then
-    if screen -ls | grep "tgpt"; then
-      say="tgpt already running"
-      print_msg
-      exit 0
-    fi
-	answ[0]="Ping me when you need me. 🙂"
-    answ[1]="I jump ❗"
-    rnd_answer
-    tgpt_start
-  fi 
-  if [ "$command" = "!gpt stop" ]; then
-    answ[0]="Ping me when you need me. 🙂"
-    answ[1]="I jump ❗"
-    rnd_answer
-    tgpt_stop
-  fi 
-  if [ "$command" = "!gpt restart" ]; then
-    answ[0]="Yes sir. 🙂"
-    answ[1]="I will do that ❗"
-    rnd_answer
-    rm gpt.busy
-    tgpt_stop
-    tgpt_start
-  fi 
-  if [ "$command" = "!userjoin on" ]; then
-    user_join_on
+elif [ ! -f wirebot.stop ]; then
+  if [ "$command" = "!start" ]; then
+    exit
   fi
-  if [ "$command" = "!userjoin off" ]; then
-    user_join_off
-  fi  
-  if [ "$command" = "!userleave on" ]; then
-    user_leave_on
-  fi
-  if [ "$command" = "!userleave off" ]; then
-    user_leave_off
-  fi 
-  fi
-    if [ "$command" = "!kill_screen" ]; then
-    say="Cya."
-    kill_screen
-  fi
+fi
 
+if [[ "$command" == *"Using timestamp"* ]]; then
   if [ -f wirebot.stop ]; then
-    if [ "$command" = "!start" ]; then
-          rm wirebot.stop
-    elif [ "$command" = "!stop" ]; then
-      say="/afk"
-      print_msg
-      exit
-    else
-      exit
-    fi
-  elif [ ! -f wirebot.stop ]; then
-    if [ "$command" = "!start" ]; then
-          exit
-    fi
+    rm wirebot.stop
   fi
-
-  if [[ "$command" == *"Using timestamp"* ]]; then
-    if [ -f wirebot.stop ]; then
-      rm wirebot.stop
-  fi
- 
 fi
 
 }
