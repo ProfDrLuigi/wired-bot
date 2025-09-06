@@ -355,7 +355,7 @@ function admin {
 
 # Check if user has admin rights
 if [[ "$command" = \!* ]]; then  
-  if [[ "$admin_user" != "$login" ]]; then
+  if [[ "$admin_user" != *"$login"* ]]; then
     say="🚫 You are not allowed to do this $nick 🚫"
     print_msg
     exit
