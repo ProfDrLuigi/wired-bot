@@ -8,7 +8,7 @@ Have a look at Point 1. und 2. and execute them.
 
 Than change the first line of wirebotctl with "MAINPATH" to your needs. In my case I cloned the wired-cli-bot repo to:
 
-  /opt/wired-cli
+    /opt/wired-cli
 
 After that set a symlink for examples/console_chat.py in the wired-cli-bot directory. See my example Picture.
 
@@ -16,4 +16,4 @@ After that set a symlink for examples/console_chat.py in the wired-cli-bot direc
 
 You have to set the hostname, user, password etc. in the top of wirebotctl too. If you are done you can start the bot with:
 
-  ./wirebotctl start
+    ./wirebotctl start
