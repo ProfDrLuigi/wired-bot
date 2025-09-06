@@ -217,23 +217,6 @@ function rssfeed_off {
   sed -i '0,/.*rssfeed=.*/ s/.*rssfeed=.*/rssfeed=0/g' wirebot.sh
 }
 
-function imgbb_upload {
-	
-	IMAGE_B64=$(base64 -w 0 "picture.jpg")
-	
-	RESPONSE=$(curl -s -X POST \
-	  -F "key=$imgbb_key" \
-	  -F "image=$IMAGE_B64" \
-	  https://api.imgbb.com/1/upload)
-	
-	URL=$(echo "$RESPONSE" | grep -oP '"url":"\K[^"]+')
-	
-	if [[ -n "$URL" ]]; then
-		imgbb_url=$( echo "$URL" | head -n 1 | sed 's/\\//g' )
-	fi
-
-}
-
 function tgpt {
 
 if [[ "$command" = "#"* ]]; then
@@ -259,7 +242,7 @@ if [[ "$command" = "#"* ]]; then
     	exit
 	  fi
 
-	  imgbb_upload
+	  imgbb_url=$( curl -s -X POST -F "key=$imgbb_key" -F "image=@picture.jpg" https://api.imgbb.com/1/upload | grep -oP '"url":"\K[^"]+' | head -n1 | sed 's/\\//g' )
 
 	  say=$( echo "<img src=\"$imgbb_url\"></img>" )
 	  rm picture.jpg > /dev/null
