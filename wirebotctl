@@ -1,0 +1,277 @@
+#!/bin/sh
+
+MAINPATH="/opt/wired-cli"
+
+PIDFILE="$MAINPATH/wirebot.pid"
+PIDFILE_WATCHER="$MAINPATH/watcher.pid"
+BASHFILE="$MAINPATH/wirebot.sh"
+
+HOSTNAME=""
+PORT=""
+SOCKET="$MAINPATH/wirebot.sock"
+SCRIPT="$MAINPATH/wirebot.sh" ### Bash receives the wired main chat as $1 through the wirebot.sock
+LOGIN=""
+PASSWORD=""
+NICK="WireBot"
+STATUS="Type #help in chat"
+ICON="$MAINPATH/robo.png"
+
+
+# The path to your wirebot binary
+WIREBOT=$( SELF=$(dirname "$0") && bash -c "cd \"$SELF\" && pwd" )
+
+cd "$MAINPATH"
+
+# Begin script
+PROG=$(basename $0)
+CMD=$1
+
+checkpid() {
+	RUNNING=0
+
+	if [ -f $PIDFILE ]; then
+		PID=`cat $PIDFILE`
+
+		if [ "x$PID" != "x" ]; then
+			if kill -0 $PID 2>/dev/null ; then
+				RUNNING=1
+			fi
+		fi
+	fi
+}
+
+checkrunning() {
+	checkpid
+
+	if [ $RUNNING -eq 0 ]; then
+		echo "$PROG: $CMD: wirebot is not running"
+		#exit 1
+	fi
+}
+
+case $CMD in
+	start)
+		checkpid
+
+		if [ $RUNNING -eq 1 ]; then
+			echo "$PROG: $CMD: wirebot (pid $PID) already running"
+			exit 1
+		fi
+
+		if screen -Sdm wirebot ; then
+			if /usr/bin/python console_chat.py -D --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --socket "$SOCKET" --script "$SCRIPT"; then
+				echo "Wirebot started"
+			fi
+			ps ax | grep -v grep | grep -v sleep | grep "console_chat.py -D" | xargs| sed 's/\ .*//g' > wirebot.pid
+			screen -S wirebot -p 0 -X title "wirebot"
+			/bin/bash "$MAINPATH/wirebot.sh" watcher_init
+			/bin/bash "$MAINPATH/wirebot.sh" rssfeed_init
+			check_gpt=$( cat wirebot.sh | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
+			if [ "$check_gpt" = "yes" ]; then
+			  /bin/bash "$MAINPATH/wirebot.sh" tgpt_start
+			fi
+		else
+			echo "$PROG: $CMD: wirebot could not be started"
+		fi
+		;;
+
+	stop)
+		checkrunning
+		if screen -XS wirebot quit; then
+			if [ -f "$MAINPATH/watcher.pid" ];then
+			  rm "$MAINPATH/watcher.pid"
+			fi
+			if [ -f "$MAINPATH/rss.pid" ];then
+			  rm "$MAINPATH/rss.pid"
+			fi
+			#/bin/bash "$MAINPATH/wirebot.sh" tgpt_stop
+			echo "$PROG: $CMD: wirebot stopped"
+		else
+			echo "$PROG: $CMD: wirebot could not be stopped"
+		fi
+		
+		if screen -XS tgpt quit; then
+			if [ -f "$MAINPATH/tgpt.pid" ];then
+				rm "$MAINPATH/tgpt.pid"
+			fi	
+			echo "$PROG: $CMD: tgpt stopped"
+		else
+			echo "$PROG: $CMD: tgpt could not be stopped"
+		fi
+		
+		if [ -f "$MAINPATH/wirebot.pid" ];then
+			kill -KILL $(cat wirebot.pid)
+		    rm "$MAINPATH/wirebot.pid"
+		fi
+		
+		
+		;;
+	status)
+		checkpid
+
+		if [ $RUNNING -eq 1 ]; then
+			echo ""
+			echo "$PROG: $CMD: wirebot is running on pid $PID"
+			
+			check=$( ps ax | grep -v grep | grep "inotifywait" )
+  				if [ "$check" != "" ] && [ -f "$PIDFILE_WATCHER" ]; then
+					WATCHER_PID=$( cat "$PIDFILE_WATCHER" )
+					echo "$PROG: $CMD: watcher is running on pid $WATCHER_PID"
+				fi
+		fi
+
+		join_check=$( cat "$BASHFILE" | grep -v "sed" | grep "user_join=" | sed 's/.*=//g' )
+		leave_check=$( cat "$BASHFILE" | grep -v "sed" | grep "user_leave=" | sed 's/.*=//g' )
+		wordfilter_check=$( cat "$BASHFILE" | grep -v "sed" | grep "wordfilter=" | sed 's/.*=//g' )
+		common_reply_check=$( cat "$BASHFILE" | grep -v "sed" | grep "common_reply=" | sed 's/.*=//g' )
+		admin_user_check=$( cat "$BASHFILE" | grep -v "sed" | grep "admin_user=" | sed -e 's/.*=//g' -e 's/\"//g' )
+		echo ""
+		echo "Settings:"
+		echo ""
+		echo "User join    =" "$join_check"
+		echo "User leave   =" "$leave_check"
+		echo "Wordfilter   =" "$wordfilter_check"
+		echo "Common reply =" "$common_reply_check"
+		echo "Admin user   =" "$admin_user_check"
+		echo ""
+		;;
+
+	screen)
+		checkrunning
+
+		if screen -rS wirebot -p 0; then
+			echo "$PROG: $CMD: Entering screen session"
+		else
+			echo -e "\n$PROG: $CMD: wirebot is not running"
+			#exit 1
+		fi
+		;;
+
+	restart)
+		checkpid
+
+		if [ $RUNNING -eq 1 ]; then
+			if screen -ls | grep "wirebot" | cut -d. -f1 | awk '{print $1}' | xargs -I {} screen -S {} -X quit; then
+				if [ -f "$MAINPATH/watcher.pid" ];then
+				  rm "$MAINPATH/watcher.pid"
+				fi
+				if [ -f "$MAINPATH/wirebot.pid" ];then
+				  rm "$MAINPATH/wirebot.pid"
+				fi
+				echo "$PROG: $CMD: wirebot stopped"
+			else
+				echo "$PROG: $CMD: wirebot could not be stopped"
+				exit 1
+			fi
+		fi
+
+		checkpid
+
+		if [ $RUNNING -eq 1 ]; then
+			echo "$PROG: $CMD: wirebot (pid $PID) already running"
+			exit 1
+		fi
+
+		if screen -Sdm wirebot $WIREBOT/wirebot ; then
+			/bin/bash "$MAINPATH/wirebot.sh" watcher_init
+			/bin/bash "$MAINPATH/wirebot.sh" rssfeed_init
+			/bin/bash "$MAINPATH/wirebot.sh" tgpt_stop
+			check_gpt=$( cat wirebot.sh | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
+			if [ "$check_gpt" = yes ]; then
+			  /bin/bash "$MAINPATH/wirebot.sh" tgpt_start
+			fi
+		else
+			echo "$PROG: $CMD: wirebot could not be started"
+		fi
+		;;
+
+	watch)
+		/bin/bash "$BASHFILE" watcher_start
+		;;
+
+	nowatch)
+		/bin/bash "$BASHFILE" watcher_stop
+		;;
+
+	join_on)
+		/bin/bash "$BASHFILE" user_join_on
+		;;
+
+	join_off)
+		/bin/bash "$BASHFILE" user_join_off
+		;;
+
+	leave_on)
+		/bin/bash "$BASHFILE" user_leave_on
+		;;
+
+	leave_off)
+		/bin/bash "$BASHFILE" user_leave_off
+		;;
+
+	wordfilter_on)
+		/bin/bash "$BASHFILE" wordfilter_on
+		;;
+
+	wordfilter_off)
+		/bin/bash "$BASHFILE" wordfilter_off
+		;;
+
+	common_reply_on)
+		/bin/bash "$BASHFILE" common_reply_on
+		;;
+
+	common_reply_off)
+		/bin/bash "$BASHFILE" common_reply_off
+		;;
+
+	rss_on)
+		/bin/bash "$BASHFILE" rssfeed_start
+		;;
+
+	rss_off)
+		/bin/bash "$BASHFILE" rssfeed_stop
+		;;
+	gpt_on)
+		/bin/bash "$BASHFILE" tgpt_start
+		;;
+	gpt_off)
+		/bin/bash "$BASHFILE" tgpt_stop
+		;;
+	*)
+		cat <<EOF
+
+Usage:  wirebotctl [COMMAND]
+
+	COMMAND:
+	start			Start wirebot
+	stop			Stop wirebot
+	restart			Restart wirebot
+	screen			Join screen session (To exit session press ctrl+a and than d)
+	watch/nowatch		Switch filewatching on/off
+	status			Show the status
+	
+	join_on			Activate greeting if user joined server
+	join_off		Deactivate greeting if user joined server
+	
+	leave_on		Activate greeting if user leaved server
+	leave_off		Deactivate greeting if user leaved server
+
+	wordfilter_on		Activate wordfilter
+	wordfilter_off		Deactivate wordfilfter
+	
+	common_reply_on		Activate talkativeness
+	common_reply_off	Deactivate talkativeness	
+	
+	rss_on			Activate RSS Newsfeed
+	rss_off			Deactivate RSS Newsfeed
+	
+	gpt_on			Activate tgpt
+	gpt_off			Deactivate tgpt
+
+By Prof. Dr. Luigi 
+Original by Rafaël Warnault <dev@read-write.fr>
+
+EOF
+		;;
+esac
