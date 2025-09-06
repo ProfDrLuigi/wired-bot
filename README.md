@@ -74,6 +74,12 @@ If you don't need this feature you can disable it by typing
 
 	/opt/wired-cli/./wirebotctl nowatch
 
+ To run filewatcher you need the dependency:
+
+	inotifywait
+
+Install it from your System Repository.
+
 </details>
 
 <details>
