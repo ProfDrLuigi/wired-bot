@@ -42,7 +42,47 @@ If you want to start tgpt in background with wirebotctl you must set this:
 	gpt_autostart=yes
 in wirebot.sh
 
-### --- General use --- ##
+</details>
+
+<details>
+<summary>
+<h2>
+RSS Feed (MacRumors / Tarnkappe)
+</h2>
+</summary>
+
+### If you don't want to use RSS Feed:
+
+If you don't need this feature you can disable it by typing
+
+	/opt/wired-cli/wirebot.sh rss_off
+
+</details>
+
+<details>
+<summary>
+<h2>
+Filewatcher
+</h2>
+</summary>
+
+To change the Path of the folder which should be watched change the corresponding options in
+
+	/opt/wired-cli/wirebot.sh
+
+If you don't need this feature you can disable it by typing
+
+	/opt/wired-cli/./wirebotctl nowatch
+
+</details>
+
+<details>
+<summary>
+<h2>
+General use
+</h2>
+</summary>
+
 To use it in chat simply start every chat line with # e.g.
 
 	# How are you today?
@@ -60,9 +100,11 @@ To see all possible options of the bot type
 	#help
 
 in main chat window.
+
 </details>
 
-#### 2. Control wirebot:
+
+#### Control wirebot:
 
 	Usage:  wirebotctl [COMMAND]
 
