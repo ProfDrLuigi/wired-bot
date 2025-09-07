@@ -49,17 +49,51 @@ admin_user="admin,luigi"
 SELF=$(SELF=$(dirname "$0") && bash -c "cd \"$SELF\" && pwd")
 cd "$SELF"
 
-nick=$(echo "$1" | awk -F' \\|\\|\\| ' '{print $1}')
-login=$(echo "$1" | awk -F' \\|\\|\\| ' '{print $2}')
-command=$(echo "$1" | awk -F' \\|\\|\\| ' '{print $3}')
-
 function print_msg {
   echo "$say" | socat - UNIX-CONNECT:wirebot.sock 
 }
 
-function decline_chat {
-  screen -S wirebot -p wirebot -X stuff "/close"^M
+function join_left {
+
+#### User join server (user_join) ####
+if [ "${user_join:-0}" -eq 1 ]; then
+  if [ "$command" = "joined" ]; then
+  	echo "joined" > /tmp/yo
+    sleep 2
+    say="Hi $nick 😁"
+    print_msg
+    exit
+  fi
+fi
+
+#### User leave server (user_leave) ####
+if [ "${user_leave:-0}" -eq 1 ]; then
+  if [ "$command" = "left" ]; then
+    echo "left" > /tmp/yo
+  	sleep 1
+    say="Bye $nick 😔"
+    print_msg
+    exit
+  fi
+fi
+
 }
+
+join_left_check=$(echo "$1" | awk '{print $1}')
+
+if [[ "$join_left_check" == "joined" ]]; then
+  command="joined"
+  nick=$(echo "$1" | awk -F' \\|\\|\\| ' '{print $2}')
+  join_left
+elif [[ "$join_left_check" == "left" ]]; then
+  command="left"
+  nick=$(echo "$1" | awk -F' \\|\\|\\| ' '{print $2}')
+  join_left
+else
+  nick=$(echo "$1" | awk -F' \\|\\|\\| ' '{print $1}')
+  login=$(echo "$1" | awk -F' \\|\\|\\| ' '{print $2}')
+  command=$(echo "$1" | awk -F' \\|\\|\\| ' '{print $3}')
+fi
 
 function rnd_answer {
   size=${#answ[@]}
@@ -265,25 +299,6 @@ fi
 
 function phrases {
 
-#### User join server (user_join) ####
-if [ $user_join = 1 ]; then
-  if [[ "$command" == *" has joined" ]]; then
-    nick=$( cat wirebot.cmd | sed -e 's/.*\]\ //g' -e 's/\ has\ joined//g' -e 's/;0m//g' | xargs )
-    say=$( /opt/wired-cli/tgpt -q --provider gemini --key "$gemini_key" "Begrüße den User $nick auf Englisch. Denke dir was aus und frage nicht nach. Einen Einzeiler. Aber abwechslungsreich und vermeide zu oft Greetings am Anfang. Der Name des zu Grüßenden soll auch nicht immer am Anfang des Satzes stehen. Es soll immer nur eine Begrüßung erfolgen, nie mehrere!")
-    #say="Hi $nick 😁"
-    print_msg
-  fi
-fi
-
-#### User leave server (user_leave) ####
-if [ $user_leave = 1 ]; then
-  if [[ "$command" == *" has left" ]]; then
-    nick=$( cat wirebot.cmd | sed -e 's/.*\]\ //g' -e 's/\ has\ left//g' -e 's/;0m//g' | xargs )
-    say="Bye $nick 😔"
-    print_msg
-  fi
-fi
-
 #### wordfilter (wordfilter)####
 if [[ "$command" == *"Hey, why did you"* ]]; then
   exit
@@ -415,15 +430,23 @@ fi
 
 if [ "$command" = "!userjoin on" ]; then
   user_join_on
+  say="Yes sir. 🙂"
+  print_msg
 fi
 if [ "$command" = "!userjoin off" ]; then
   user_join_off
+say="Yes sir. 🙂"
+  print_msg
 fi  
 if [ "$command" = "!userleave on" ]; then
   user_leave_on
+  say="Yes sir. 🙂"
+  print_msg
 fi
 if [ "$command" = "!userleave off" ]; then
   user_leave_off
+  say="Yes sir. 🙂"
+  print_msg
 fi 
 
 if [ "$command" = "!kill_screen" ]; then
