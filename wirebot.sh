@@ -58,7 +58,6 @@ function join_left {
 #### User join server (user_join) ####
 if [ "${user_join:-0}" -eq 1 ]; then
   if [ "$command" = "joined" ]; then
-  	echo "joined" > /tmp/yo
     sleep 2
     say="Hi $nick 😁"
     print_msg
@@ -69,7 +68,6 @@ fi
 #### User leave server (user_leave) ####
 if [ "${user_leave:-0}" -eq 1 ]; then
   if [ "$command" = "left" ]; then
-    echo "left" > /tmp/yo
   	sleep 1
     say="Bye $nick 😔"
     print_msg
