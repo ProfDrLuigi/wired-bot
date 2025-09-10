@@ -20,7 +20,14 @@ If you want the Watch-Dir function of the Bot you must install this Dependency t
 	
  	pip3 install watchdog
 
-If you are done change into the wired-bot dir and fit wired-bot.sh and wired-botctl.sh to your needs.
+If you are done change into the wired-bot dir and fit 
+
+	wired-bot.sh
+and
+
+	wired-botctl.sh 
+
+to your needs.
 
 At the end you can start the bot with:
 
