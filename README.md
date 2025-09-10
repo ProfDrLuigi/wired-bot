@@ -126,7 +126,6 @@ in main chat window.
 	stop			Stop wirebot
 	screen			Join screen session (To exit session press ctrl+a and than d)
 	status			Show the status
-	config			Show the configuration
 	
 	join_on			Activate greeting if user joined server
 	join_off		Deactivate greeting if user joined server
