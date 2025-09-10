@@ -80,12 +80,6 @@ fi
 
 }
 
-function watchdog_phrase {
-  say=$( echo "<div>💾 New Stuff has arrived: <a href=\"wiredp7:///00 Upload Folders/Mac/$file/.goto/\">$file</a></div>" )
-  print_msg
-  exit
-}
-
 prefix_check=$(echo "$1" | awk '{print $1}')
 
 if [[ "$prefix_check" == "joined" ]]; then
@@ -96,10 +90,6 @@ elif [[ "$prefix_check" == "left" ]]; then
   command="left"
   nick=$(echo "$1" | awk -F' \\|\\|\\| ' '{print $2}')
   join_left
-elif [[ "$prefix_check" == "watchdog" ]]; then
-  file=$(echo "$1" | awk -F' \\|\\|\\| ' '{print $2}')
-  echo "watchdog triggered" "$file" > /tmp/shit
-  watchdog_phrase
 else
   nick=$(echo "$1" | awk -F' \\|\\|\\| ' '{print $1}')
   login=$(echo "$1" | awk -F' \\|\\|\\| ' '{print $2}')
