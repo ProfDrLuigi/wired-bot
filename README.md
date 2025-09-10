@@ -39,8 +39,8 @@ GPT
  	https://go.dev/dl
 Compile my modified version of the original tgpt version (https://github.com/aandrew-me/tgpt)
  	
-  	git clone https://github.com/ProfDrLuigi/tgpt
- 	cd tgpt
+  	git clone https://github.com/ProfDrLuigi/wired-tgpt
+ 	cd wired-tgpt
   	bash build.sh  	
 Rename your desired binary in the build folder to 
 
