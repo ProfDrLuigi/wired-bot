@@ -50,7 +50,7 @@ do
   if  [ "$macrumors_check" = "" ]; then
     if [ "$macrumors" = "1" ]; then
       macrumors_rss
-      echo "$macrumors_say" | socat - UNIX-CONNECT:/opt/wired-cli/wired-bot.sock 
+      echo "$macrumors_say" | socat - UNIX-CONNECT:wired-bot.sock 
       echo "$macrumors_now" >> rss.brain
     fi
   fi
@@ -58,7 +58,7 @@ do
   if  [ "$tarnkappe_check" = "" ]; then
     if [ "$tarnkappe" = "1" ]; then
       tarnkappe_rss
-      echo "$tarnkappe_say" | socat - UNIX-CONNECT:/opt/wired-cli/wired-bot.sock 
+      echo "$tarnkappe_say" | socat - UNIX-CONNECT:wired-bot.sock 
       echo "$tarnkappe_now" >> rss.brain
     fi
   fi
