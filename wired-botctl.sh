@@ -15,8 +15,10 @@ ICON="$MAINPATH/robo.png"
 WATCH_DIR=""  # Must be an absolute Hostsystem Path
 #####################################################
 
+#### Do not touch! ####
 PIDFILE="$MAINPATH/wired-bot.pid"
 BASHFILE="$MAINPATH/wired-bot.sh"
+####
 
 WIREDBOT=$( SELF=$(dirname "$0") && bash -c "cd \"$SELF\" && pwd" )
 
