@@ -1,22 +1,30 @@
-# wired-cli-bot
+# wired-bot
 
-Clone my repository first and than this:
+This is a Wired 2.0 Python Bot based on docmeth02's wired-cli project.
 
-https://git.docmeth02.host/wired/wired-cli
+To install the Bot follow these steps:
 
-Have a look at Point 1. und 2. and execute them.
+	git clone https://github.com/ProfDrLuigi/wired-bot
+ 	git clone https://git.docmeth02.host/wired/wired-cli
 
-Than change the first line of wirebotctl with "MAINPATH" to your needs. In my case I cloned the wired-cli-bot repo to:
+	cd wired-cli
+ 	
+  	python3 -m venv venv
+  	source venv/bin/activate  # on macOS/Linux
+	# .\venv\Scripts\activate  # on Windows PowerShell
+	python -m pip install --upgrade pip
+ 	pip3 install https://git.docmeth02.host/wired/wired-python/-/archive/master/wired-python-master.zip
+  	pip install -e .
+	
+If you want the Watch-Dir function of the Bot you must install this Dependency too:
+	
+ 	pip3 install watchdog
 
-    /opt/wired-cli
+If you are done change into the wired-bot dir and fit wired-bot.sh and wired-botctl.sh to your needs.
 
-After that set a symlink for examples/console_chat.py in the wired-cli-bot directory. See my example Picture.
+At the end you can start the bot with:
 
-<img width="1237" height="295" alt="Bildschirmfoto 2025-09-06 um 14 59 52" src="https://github.com/user-attachments/assets/2fc30317-7732-43f0-ad5e-7984b355ca10" />
-
-You have to set the hostname, user, password etc. in the top of wirebotctl too. If you are done you can start the bot with:
-
-    ./wirebotctl start
+    ./wired-botctl start
 
 <details>
 <summary>
@@ -36,7 +44,7 @@ Compile my modified version of the original tgpt version (https://github.com/aan
   	bash build.sh  	
 Copy your desired binary in the build folder to
 
-	/opt/wired-cli/tgpt
+	/opt/wired-bot/tgpt
 If you want to start tgpt in background with wirebotctl you must set this:
 
 	gpt_autostart=yes
@@ -55,7 +63,7 @@ RSS Feed (MacRumors / Tarnkappe)
 
 If you don't need this feature you can disable it by typing
 
-	/opt/wired-cli/wirebot.sh rss_off
+	/opt/wired-bot/./wired-bot.sh rss_off
 
 </details>
 
@@ -68,11 +76,11 @@ Filewatcher
 
 To change the Path of the folder which should be watched change the corresponding options in
 
-	/opt/wired-cli/wirebot.sh
+	
 
 If you don't need this feature you can disable it by typing
 
-	/opt/wired-cli/./wirebotctl nowatch
+	/opt/wired-bot/./wired-botctl nowatch
 
  To run filewatcher you need the dependency:
 
