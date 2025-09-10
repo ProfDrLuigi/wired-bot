@@ -105,7 +105,7 @@ To change the Path of the folder which should be watched change the correspondin
 <details>
 <summary>
 <h2>
-General use
+General use within the mainchat of the WiredClient
 </h2>
 </summary>
 
