@@ -20,6 +20,10 @@ If you want the Watch-Dir function of the Bot you must install this Dependency t
 	
  	pip3 install watchdog
 
+If you want the RSS Feed function of the Bot you must install this Dependency too:
+
+	pip3 install feedparser
+
 If you are done change into the wired-bot dir and fit 
 
 	wired-bot.sh
