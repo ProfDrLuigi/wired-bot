@@ -144,15 +144,23 @@ function rssfeed_init {
 }
 
 function tgpt_start {
-  screen -dmS tgpt /opt/wired-bot/tgpt -i -q --provider gemini --key "$gemini_key" -log /tmp/tgpt.log
-  ps ax | grep -v grep | grep "tgpt -i -q --provider" | xargs| sed 's/\ .*//g' > tgpt.pid
-  echo "tgpt started"
+  if [ ! -f wired-tgpt.pid ]; then
+    screen -dmS wired-tgpt /opt/wired-bot/wired-tgpt -i -q --provider gemini --key "$gemini_key" -log /tmp/wired-tgpt.log
+    ps ax | grep -v grep | grep "tgpt -i -q --provider" | xargs| sed 's/\ .*//g' > wired-tgpt.pid
+    echo "wired-tgpt started"
+  else
+    echo "wired-tgpt is already running!"
+  fi
 }
 
 function tgpt_stop {
-  screen -S tgpt -p 0 -X kill
-  rm gpt.busy
-  echo "tgpt stopped"
+  if [ -f wired-tgpt.pid ]; then
+    screen -S wired-tgpt -p 0 -X kill
+    rm wired-tgpt.pid
+  	echo "wired-tgpt stopped"
+  else
+    echo "wired-tgpt is not running!"
+  fi
 }
 
 function user_join_on {
@@ -232,9 +240,9 @@ if [[ "$command" = "#"* ]]; then
 	  # Nun exklusiver Zugriff garantiert
 	  conversation=$(echo "$command" | sed 's/.*#//g')
 		
-	  screen -S tgpt -p 0 -X stuff "$conversation"
+	  screen -S wired-tgpt -p 0 -X stuff "$conversation"
 	  sleep 0.5
-	  screen -S tgpt -p 0 -X stuff $'\n'
+	  screen -S wired-tgpt -p 0 -X stuff $'\n'
 	  exit
 	fi
 fi 	
@@ -347,7 +355,7 @@ if [ "$command" = "!stop" ]; then
   touch wired-bot.stop
 fi
 if [ "$command" = "!gpt start" ]; then
-  if screen -ls | grep "tgpt"; then
+  if screen -ls | grep "wired-tgpt"; then
     say="tgpt already running"
     print_msg
     exit 0
