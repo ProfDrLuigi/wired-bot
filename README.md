@@ -1,8 +1,13 @@
 # wired-bot
 
-This is a Wired 2.0 Python Bot based on docmeth02's wired-cli project.
+This is a Wired 2.0 Python Bot based on docmeth02's wired-cli project (https://git.docmeth02.host/wired/wired-cli).
 
-To install the Bot follow these steps:
+<details>
+<summary>
+<h2>
+Installation
+</h2>
+</summary>
 
 	git clone https://github.com/ProfDrLuigi/wired-bot
  	git clone https://git.docmeth02.host/wired/wired-cli
@@ -36,6 +41,8 @@ to your needs.
 At the end you can start the bot with:
 
     ./wired-botctl start
+
+</details>
 
 <details>
 <summary>
