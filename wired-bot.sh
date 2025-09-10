@@ -154,7 +154,7 @@ function rssfeed_init {
 }
 
 function tgpt_start {
-  screen -dmS tgpt /opt/wired-cli/tgpt -i -q --provider gemini --key "$gemini_key" -log /tmp/tgpt.log
+  screen -dmS tgpt /opt/wired-bot/tgpt -i -q --provider gemini --key "$gemini_key" -log /tmp/tgpt.log
   ps ax | grep -v grep | grep "tgpt -i -q --provider" | xargs| sed 's/\ .*//g' > tgpt.pid
   echo "tgpt started"
 }
