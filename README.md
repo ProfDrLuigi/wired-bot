@@ -125,7 +125,6 @@ in main chat window.
 	start			Start wirebot
 	stop			Stop wirebot
 	screen			Join screen session (To exit session press ctrl+a and than d)
-	watch/nowatch		Switch filewatching on/off
 	status			Show the status
 	config			Show the configuration
 	
