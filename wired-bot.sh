@@ -116,8 +116,8 @@ function kill_screen {
   if [ -f rss.pid ]; then
     rm rss.pid
   fi
-  screen -ls | grep "wirebot" | cut -d. -f1 | awk '{print $1}' | xargs -I {} screen -S {} -X quit
-  pkill -f wirebot
+  screen -ls | grep "wired-bot" | cut -d. -f1 | awk '{print $1}' | xargs -I {} screen -S {} -X quit
+  pkill -f wired-bot
 }
 
 function rssfeed_def {
@@ -127,7 +127,7 @@ function rssfeed_def {
 function rssfeed_start {
   check=$( ps ax | grep -v grep | grep "./rss.sh" )
   if [ "$check" = "" ]; then
-    screen -S wirebot -x -X screen -t rss bash -c "bash "$SELF"/wired-bot.sh rssfeed_def; exec bash" &
+    screen -S wired-bot -x -X screen -t rss bash -c "bash "$SELF"/wired-bot.sh rssfeed_def; exec bash" &
     sleep 2
     ps ax | grep -v grep | grep -v sleep | grep "rssfeed_def; exec bash" | xargs| sed 's/\ .*//g' > rss.pid
     echo "RSS feed started"
@@ -141,7 +141,7 @@ function rssfeed_stop {
   if ! [ -f rss.pid ]; then
     echo "RSS feed is not running!"
   else
-    screen -S wirebot -p "rss" -X kill
+    screen -S wired-bot -p "rss" -X kill
     rm rss.pid
     echo "RSS feed stopped"
   fi
