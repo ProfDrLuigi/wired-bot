@@ -110,14 +110,13 @@ in main chat window.
 </details>
 
 
-#### Control wirebot:
+#### Control wired-bot:
 
-	Usage:  wirebotctl [COMMAND]
+	Usage:  wired-botctl [COMMAND]
 
 	COMMAND:
 	start			Start wirebot
 	stop			Stop wirebot
-	restart			Restart wirebot
 	screen			Join screen session (To exit session press ctrl+a and than d)
 	watch/nowatch		Switch filewatching on/off
 	status			Show the status
