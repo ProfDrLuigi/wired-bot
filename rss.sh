@@ -1,10 +1,10 @@
 #!/bin/bash
 #
 
-wirebot=$( cat wirebot.sh )
-macrumors=$( echo "$wirebot" | grep "macrumors=" | sed 's/macrumors=//g' )
-tarnkappe=$( echo "$wirebot" | grep "tarnkappe=" | sed 's/tarnkappe=//g' ) 
-interval=$( echo "$wirebot" | grep "interval=" | sed 's/interval=//g' )
+wired-bot=$( cat wired-bot.sh )
+macrumors=$( echo "$wired-bot" | grep "macrumors=" | sed 's/macrumors=//g' )
+tarnkappe=$( echo "$wired-bot" | grep "tarnkappe=" | sed 's/tarnkappe=//g' ) 
+interval=$( echo "$wired-bot" | grep "interval=" | sed 's/interval=//g' )
 
 function macrumors_rss {
   macrumors_feed=$( curl --silent "https://feeds.macrumors.com/MacRumors-All" | \
@@ -12,7 +12,7 @@ function macrumors_rss {
   tail -n +4 | \
   sed -e 's/^[ \t]*//' | \
   sed -e 's/<title>//' -e 's/<\/title>//' -e 's/<description>/  /' -e 's/<\/description>//' | head -n 1 | sed -e 's/.*CDATA\[//g' -e 's/<br\/>//g' | tr -dc '[[:print:]]\n' )
-  macrumors_say=$( echo -e "<n><b><u>+++ Macrumors Breaking News +++</u></b><br>""$macrumors_feed""</n>" )
+  macrumors_say=$( echo -e "<div><b><u>+++ Macrumors Breaking News +++</u></b><br>""$macrumors_feed""</div>" )
 }
 
 function tarnkappe_rss {
@@ -22,7 +22,7 @@ function tarnkappe_rss {
   descr="${lines[2]}"
   url_title="${lines[3]}"
   url_title=$( echo "$url_title" | sed -e 's/.*.html" rel="nofollow">//g' -e 's/<\/a>.*//g' )
-  tarnkappe_say=$( echo -e "<n><b><u>+++ Tarnkappe Breaking News +++</b></u><br><b>""$title""</b><br>""$descr ""<a rel=nofollow href=""$url"">Zum Artikel</a>""</n>" | sed ':a;N;$!ba;s/\n//g' | sed -e 's/<p>//g' -e 's/<\/p>//g' )
+  tarnkappe_say=$( echo -e "<div><b><u>+++ Tarnkappe Breaking News +++</b></u><br><b>""$title""</b><br>""$descr ""<a rel=nofollow href=""$url"">Zum Artikel</a>""</div>" | sed ':a;N;$!ba;s/\n//g' | sed -e 's/<p>//g' -e 's/<\/p>//g' )
 }
 
 if [ "$macrumors" = "1" ]; then
@@ -50,7 +50,7 @@ do
   if  [ "$macrumors_check" = "" ]; then
     if [ "$macrumors" = "1" ]; then
       macrumors_rss
-      echo "$macrumors_say" | socat - UNIX-CONNECT:/opt/wired-cli/wired.sock 
+      echo "$macrumors_say" | socat - UNIX-CONNECT:/opt/wired-cli/wired-bot.sock 
       echo "$macrumors_now" >> rss.brain
     fi
   fi
@@ -58,7 +58,7 @@ do
   if  [ "$tarnkappe_check" = "" ]; then
     if [ "$tarnkappe" = "1" ]; then
       tarnkappe_rss
-      echo "$tarnkappe_say" | socat - UNIX-CONNECT:/opt/wired-cli/wirebot.sock 
+      echo "$tarnkappe_say" | socat - UNIX-CONNECT:/opt/wired-cli/wired-bot.sock 
       echo "$tarnkappe_now" >> rss.brain
     fi
   fi
