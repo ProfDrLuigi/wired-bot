@@ -1,10 +1,10 @@
 #!/bin/bash
 #
 
-wired-bot=$( cat wired-bot.sh )
-macrumors=$( echo "$wired-bot" | grep "macrumors=" | sed 's/macrumors=//g' )
-tarnkappe=$( echo "$wired-bot" | grep "tarnkappe=" | sed 's/tarnkappe=//g' ) 
-interval=$( echo "$wired-bot" | grep "interval=" | sed 's/interval=//g' )
+wiredbot=$( cat wired-bot.sh )
+macrumors=$( echo "$wiredbot" | grep "macrumors=" | sed 's/macrumors=//g' )
+tarnkappe=$( echo "$wiredbot" | grep "tarnkappe=" | sed 's/tarnkappe=//g' ) 
+interval=$( echo "$wiredbot" | grep "interval=" | sed 's/interval=//g' )
 
 function macrumors_rss {
   macrumors_feed=$( curl --silent "https://feeds.macrumors.com/MacRumors-All" | \
