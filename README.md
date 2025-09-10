@@ -1,6 +1,6 @@
 # wired-bot
 
-This is a Wired 2.0 Python Bot based on docmeth02's wired-cli project (https://git.docmeth02.host/wired/wired-cli).
+This is a Wired 2.0(2.5) Python Bot based on docmeth02's wired-cli project (https://git.docmeth02.host/wired/wired-cli).
 
 <details>
 <summary>
@@ -127,8 +127,12 @@ in main chat window.
 
 </details>
 
-
-#### Control wired-bot:
+<details>
+<summary>
+<h2>
+Controlling the bot
+</h2>
+</summary>
 
 	Usage:  wired-botctl [COMMAND]
 
@@ -155,6 +159,8 @@ in main chat window.
 
  	gpt_on			Activate tgpt
 	gpt_off			Deactivate tgpt
+
+ </details>
 
 By Prof. Dr. Luigi
 
