@@ -1,16 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 
+################################### Change this 2 line2 to your needs ##########################################
 MAINPATH="/opt/wired-cli"
+CLONED_REPO="/home/pi/Dokumente/GitHub/wired-cli"
+################################################################################################################
 
 PIDFILE="$MAINPATH/wirebot.pid"
-PIDFILE_WATCHER="$MAINPATH/watcher.pid"
+CONFIGFILE="$MAINPATH/config"
 BASHFILE="$MAINPATH/wirebot.sh"
 
-HOSTNAME=""
-PORT=""
+HOSTNAME="localhost"
+PORT="4871"
 SOCKET="$MAINPATH/wirebot.sock"
-SCRIPT="$MAINPATH/wirebot.sh" ### Bash receives the wired main chat as $1 through the wirebot.sock
-LOGIN=""
+SCRIPT="$MAINPATH/wirebot.sh"
+LOGIN="guest"
 PASSWORD=""
 NICK="WireBot"
 STATUS="Type #help in chat"
@@ -59,12 +62,14 @@ case $CMD in
 		fi
 
 		if screen -Sdm wirebot ; then
-			if /usr/bin/python console_chat.py -D --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --socket "$SOCKET" --script "$SCRIPT"; then
+			source venv/bin/activate
+			if python console_chat.py -D --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --socket "$SOCKET" --script "$SCRIPT" --watch-dir "/mnt/wired/files/00 Upload Folders/Mac"; then
 				echo "Wirebot started"
 			fi
+			deactivate
 			ps ax | grep -v grep | grep -v sleep | grep "console_chat.py -D" | xargs| sed 's/\ .*//g' > wirebot.pid
 			screen -S wirebot -p 0 -X title "wirebot"
-			/bin/bash "$MAINPATH/wirebot.sh" watcher_init
+			#/bin/bash "$MAINPATH/wirebot.sh" watcher_init
 			/bin/bash "$MAINPATH/wirebot.sh" rssfeed_init
 			check_gpt=$( cat wirebot.sh | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
 			if [ "$check_gpt" = "yes" ]; then
@@ -78,13 +83,9 @@ case $CMD in
 	stop)
 		checkrunning
 		if screen -XS wirebot quit; then
-			if [ -f "$MAINPATH/watcher.pid" ];then
-			  rm "$MAINPATH/watcher.pid"
-			fi
 			if [ -f "$MAINPATH/rss.pid" ];then
 			  rm "$MAINPATH/rss.pid"
 			fi
-			#/bin/bash "$MAINPATH/wirebot.sh" tgpt_stop
 			echo "$PROG: $CMD: wirebot stopped"
 		else
 			echo "$PROG: $CMD: wirebot could not be stopped"
@@ -112,12 +113,6 @@ case $CMD in
 		if [ $RUNNING -eq 1 ]; then
 			echo ""
 			echo "$PROG: $CMD: wirebot is running on pid $PID"
-			
-			check=$( ps ax | grep -v grep | grep "inotifywait" )
-  				if [ "$check" != "" ] && [ -f "$PIDFILE_WATCHER" ]; then
-					WATCHER_PID=$( cat "$PIDFILE_WATCHER" )
-					echo "$PROG: $CMD: watcher is running on pid $WATCHER_PID"
-				fi
 		fi
 
 		join_check=$( cat "$BASHFILE" | grep -v "sed" | grep "user_join=" | sed 's/.*=//g' )
@@ -152,9 +147,6 @@ case $CMD in
 
 		if [ $RUNNING -eq 1 ]; then
 			if screen -ls | grep "wirebot" | cut -d. -f1 | awk '{print $1}' | xargs -I {} screen -S {} -X quit; then
-				if [ -f "$MAINPATH/watcher.pid" ];then
-				  rm "$MAINPATH/watcher.pid"
-				fi
 				if [ -f "$MAINPATH/wirebot.pid" ];then
 				  rm "$MAINPATH/wirebot.pid"
 				fi
@@ -173,7 +165,6 @@ case $CMD in
 		fi
 
 		if screen -Sdm wirebot $WIREBOT/wirebot ; then
-			/bin/bash "$MAINPATH/wirebot.sh" watcher_init
 			/bin/bash "$MAINPATH/wirebot.sh" rssfeed_init
 			/bin/bash "$MAINPATH/wirebot.sh" tgpt_stop
 			check_gpt=$( cat wirebot.sh | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
@@ -185,14 +176,10 @@ case $CMD in
 		fi
 		;;
 
-	watch)
-		/bin/bash "$BASHFILE" watcher_start
+	config)
+		grep -v "^#" $CONFIGFILE | grep -v "^$" | sort
 		;;
-
-	nowatch)
-		/bin/bash "$BASHFILE" watcher_stop
-		;;
-
+	
 	join_on)
 		/bin/bash "$BASHFILE" user_join_on
 		;;
@@ -250,6 +237,7 @@ Usage:  wirebotctl [COMMAND]
 	screen			Join screen session (To exit session press ctrl+a and than d)
 	watch/nowatch		Switch filewatching on/off
 	status			Show the status
+	config			Show the configuration
 	
 	join_on			Activate greeting if user joined server
 	join_off		Deactivate greeting if user joined server
