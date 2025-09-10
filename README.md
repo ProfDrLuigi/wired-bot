@@ -42,12 +42,11 @@ Compile my modified version of the original tgpt version (https://github.com/aan
   	git clone https://github.com/ProfDrLuigi/tgpt
  	cd tgpt
   	bash build.sh  	
-Copy your desired binary in the build folder to
-
-	/opt/wired-bot/tgpt
-If you want to start tgpt in background with wirebotctl you must set this:
+Rename your desired binary in the build folder to "tgpt" and copy it to your wired-bot folder
+If you want to start tgpt in background you must set this in wired-bot.sh
 
 	gpt_autostart=yes
+
 in wirebot.sh
 
 </details>
@@ -63,7 +62,7 @@ RSS Feed (MacRumors / Tarnkappe)
 
 If you don't need this feature you can disable it by typing
 
-	/opt/wired-bot/./wired-bot.sh rss_off
+	./wired-bot.sh rss_off
 
 </details>
 
@@ -74,21 +73,7 @@ Filewatcher
 </h2>
 </summary>
 
-To change the Path of the folder which should be watched change the corresponding options in
-
-	
-
-If you don't need this feature you can disable it by typing
-
-	/opt/wired-bot/./wired-botctl nowatch
-
- To run filewatcher you need the dependency:
-
-	inotifywait
-
-Debian/Ubuntu e.g.
-
-	sudo apt install inotifywait
+To change the Path of the folder which should be watched change the corresponding option in wired-botctl.sh
 
 </details>
 
