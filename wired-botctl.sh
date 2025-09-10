@@ -98,13 +98,13 @@ case $CMD in
 			echo "$PROG: $CMD: wired-bot could not be stopped"
 		fi
 		
-		if screen -XS tgpt quit; then
-			if [ -f "$MAINPATH/tgpt.pid" ];then
-				rm "$MAINPATH/tgpt.pid"
+		if screen -XS wired-tgpt quit; then
+			if [ -f "$MAINPATH/wired-tgpt.pid" ];then
+				rm "$MAINPATH/wired-tgpt.pid"
 			fi	
-			echo "$PROG: $CMD: tgpt stopped"
+			echo "$PROG: $CMD: wired-tgpt stopped"
 		else
-			echo "$PROG: $CMD: tgpt could not be stopped"
+			echo "$PROG: $CMD: wired-tgpt could not be stopped"
 		fi
 		
 		if [ -f "$MAINPATH/wired-bot.pid" ];then
