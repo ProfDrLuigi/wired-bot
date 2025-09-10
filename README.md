@@ -47,7 +47,7 @@ If you want to start tgpt in background you must set this in wired-bot.sh
 
 	gpt_autostart=yes
 
-in wirebot.sh
+in wired-bot.sh
 
 </details>
 
