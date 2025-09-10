@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ################################### Change this 2 line2 to your needs ##########################################
-MAINPATH="/opt/wired-bot"
+MAINPATH="/opt/wired-cli-bot"
 CLONED_REPO="/home/pi/Dokumente/GitHub/wired-cli"
 ################################################################################################################
 
