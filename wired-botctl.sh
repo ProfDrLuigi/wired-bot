@@ -4,7 +4,7 @@
 
 ############ Fit this lines to your needs ###########
 MAINPATH="/opt/wired-bot"
-CLONED_REPO="/home/pi/Dokumente/GitHub/wired-cli"
+CLONED_CLI_REPO="/home/pi/Dokumente/GitHub/wired-cli"
 HOSTNAME="localhost"
 PORT="4871"
 LOGIN="guest"
@@ -62,7 +62,7 @@ case $CMD in
 
 		if screen -Sdm wired-bot ; then
 			if [ ! -d venv ]; then
-				ln -s "$CLONED_REPO"/venv venv
+				ln -s "$CLONED_CLI_REPO"/venv venv
 			fi
 			source venv/bin/activate
 			if python wired_bot.py -D --socket "$MAINPATH/wired-bot.sock" --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --script "$BASHFILE" --watch-dir "$WATCH_DIR"; then
