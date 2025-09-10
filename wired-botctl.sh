@@ -20,7 +20,7 @@ WATCH_DIR=""  # Must be an absolute Hostsystem Path
 PIDFILE="$MAINPATH/wired-bot.pid"
 BASHFILE="$MAINPATH/wired-bot.sh"
 
-WIRED-BOT=$( SELF=$(dirname "$0") && bash -c "cd \"$SELF\" && pwd" )
+WIREDBOT=$( SELF=$(dirname "$0") && bash -c "cd \"$SELF\" && pwd" )
 
 cd "$MAINPATH"
 
@@ -61,15 +61,15 @@ case $CMD in
 		fi
 
 		if screen -Sdm wired-bot ; then
-			if [ ! -f venv ]; then
+			if [ ! -d venv ]; then
 				ln -s "$CLONED_REPO"/venv venv
 			fi
 			source venv/bin/activate
-			if python console_chat.py -D --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --socket "$SOCKET" --script "$SCRIPT" --watch-dir "$WATCH_DIR"; then
+			if python wired_bot.py -D --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --socket "$SOCKET" --script "$SCRIPT" --watch-dir "$WATCH_DIR"; then
 				echo "Wirebot started"
 			fi
 			deactivate
-			ps ax | grep -v grep | grep -v sleep | grep "console_chat.py -D" | xargs| sed 's/\ .*//g' > wired-bot.pid
+			ps ax | grep -v grep | grep -v sleep | grep "wired_bot.py -D" | xargs| sed 's/\ .*//g' > wired-bot.pid
 			screen -S wired-bot -p 0 -X title "wired-bot"
 			#/bin/bash "$MAINPATH/wired-bot.sh" watcher_init
 			/bin/bash "$MAINPATH/wired-bot.sh" rssfeed_init
@@ -87,6 +87,11 @@ case $CMD in
 		if screen -XS wired-bot quit; then
 			if [ -f "$MAINPATH/rss.pid" ];then
 			  rm "$MAINPATH/rss.pid"
+			fi
+			if [ -f "$MAINPATH/wired-bot.pid" ];then
+			  wb_pid=$( cat wired-bot.pid )
+			  rm "$MAINPATH/wired-bot.pid"
+			  kill -kill "$wb_pid"
 			fi
 			echo "$PROG: $CMD: wired-bot stopped"
 		else
@@ -166,7 +171,7 @@ case $CMD in
 			exit 1
 		fi
 
-		if screen -Sdm wired-bot $WIRED-BOT/wired-bot ; then
+		if screen -Sdm wired-bot $WIREDBOT/wired-bot ; then
 			/bin/bash "$MAINPATH/wired-bot.sh" rssfeed_init
 			/bin/bash "$MAINPATH/wired-bot.sh" tgpt_stop
 			check_gpt=$( cat wired-bot.sh | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
