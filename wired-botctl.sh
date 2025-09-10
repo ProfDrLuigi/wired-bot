@@ -47,7 +47,7 @@ checkrunning() {
 
 	if [ $RUNNING -eq 0 ]; then
 		echo "$PROG: $CMD: wired-bot is not running"
-		#exit 1
+		exit 1
 	fi
 }
 
@@ -149,40 +149,6 @@ case $CMD in
 		fi
 		;;
 
-	restart)
-		checkpid
-
-		if [ $RUNNING -eq 1 ]; then
-			if screen -ls | grep "wired-bot" | cut -d. -f1 | awk '{print $1}' | xargs -I {} screen -S {} -X quit; then
-				if [ -f "$MAINPATH/wired-bot.pid" ];then
-				  rm "$MAINPATH/wired-bot.pid"
-				fi
-				echo "$PROG: $CMD: wired-bot stopped"
-			else
-				echo "$PROG: $CMD: wired-bot could not be stopped"
-				exit 1
-			fi
-		fi
-
-		checkpid
-
-		if [ $RUNNING -eq 1 ]; then
-			echo "$PROG: $CMD: wired-bot (pid $PID) already running"
-			exit 1
-		fi
-
-		if screen -Sdm wired-bot $WIREDBOT/wired-bot ; then
-			/bin/bash "$MAINPATH/wired-bot.sh" rssfeed_init
-			/bin/bash "$MAINPATH/wired-bot.sh" tgpt_stop
-			check_gpt=$( cat wired-bot.sh | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
-			if [ "$check_gpt" = yes ]; then
-			  /bin/bash "$MAINPATH/wired-bot.sh" tgpt_start
-			fi
-		else
-			echo "$PROG: $CMD: wired-bot could not be started"
-		fi
-		;;
-
 	config)
 		grep -v "^#" $CONFIGFILE | grep -v "^$" | sort
 		;;
@@ -240,7 +206,6 @@ Usage:  wired-botctl [COMMAND]
 	COMMAND:
 	start			Start wired-bot
 	stop			Stop wired-bot
-	restart			Restart wired-bot
 	screen			Join screen session (To exit session press ctrl+a and than d)
 	watch/nowatch		Switch filewatching on/off
 	status			Show the status
