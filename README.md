@@ -42,7 +42,7 @@ Compile my modified version of the original tgpt version (https://github.com/aan
   	git clone https://github.com/ProfDrLuigi/tgpt
  	cd tgpt
   	bash build.sh  	
-Rename your desired binary in the build folder to "tgpt" and copy it to your wired-bot folder
+Rename your desired binary in the build folder to "tgpt" and copy it to your wired-bot folder.
 If you want to start tgpt in background you must set this in wired-bot.sh
 
 	gpt_autostart=yes
@@ -58,11 +58,11 @@ RSS Feed (MacRumors / Tarnkappe)
 </h2>
 </summary>
 
-### If you don't want to use RSS Feed:
+### If you want to use RSS Feed:
 
-If you don't need this feature you can disable it by typing
+If you need this feature you can enable it by typing
 
-	./wired-bot.sh rss_off
+	./wired-bot.sh rss_on
 
 </details>
 
