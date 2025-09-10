@@ -7,7 +7,6 @@ MAINPATH="/opt/wired-bot"
 CLONED_REPO="/home/pi/Dokumente/GitHub/wired-cli"
 HOSTNAME="localhost"
 PORT="4871"
-SCRIPT="$MAINPATH/wired-bot.sh"
 LOGIN="guest"
 PASSWORD=""
 NICK="WireBot"
@@ -64,7 +63,7 @@ case $CMD in
 				ln -s "$CLONED_REPO"/venv venv
 			fi
 			source venv/bin/activate
-			if python wired_bot.py -D --socket "$MAINPATH/wired-bot.sock" --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --script "$SCRIPT" --watch-dir "$WATCH_DIR"; then
+			if python wired_bot.py -D --socket "$MAINPATH/wired-bot.sock" --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --script "$MAINPATH/wired-bot.sh" --watch-dir "$WATCH_DIR"; then
 				echo "wire-bot started"
 			fi
 			deactivate
