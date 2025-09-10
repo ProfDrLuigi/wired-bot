@@ -42,7 +42,12 @@ Compile my modified version of the original tgpt version (https://github.com/aan
   	git clone https://github.com/ProfDrLuigi/tgpt
  	cd tgpt
   	bash build.sh  	
-Rename your desired binary in the build folder to "tgpt" and copy it to your wired-bot folder.
+Rename your desired binary in the build folder to 
+
+	wired-tgpt
+
+and copy it to your wired-bot folder.
+
 If you want to start tgpt in background you must set this in wired-bot.sh
 
 	gpt_autostart=yes
