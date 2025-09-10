@@ -65,7 +65,7 @@ case $CMD in
 				ln -s "$CLONED_REPO"/venv venv
 			fi
 			source venv/bin/activate
-			if python wired_bot.py -D --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --socket "$SOCKET" --script "$SCRIPT" --watch-dir "$WATCH_DIR"; then
+			if python wired_bot.py -D --socket "$MAINPATH/wired-bot.sock" --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --script "$SCRIPT" --watch-dir "$WATCH_DIR"; then
 				echo "wire-bot started"
 			fi
 			deactivate
