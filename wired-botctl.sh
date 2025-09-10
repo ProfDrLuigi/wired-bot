@@ -2,15 +2,9 @@
 #
 #
 
-######### Fit this 2 lines to your needs ########
+############ Fit this lines to your needs ###########
 MAINPATH="/opt/wired-bot"
 CLONED_REPO="/home/pi/Dokumente/GitHub/wired-cli"
-#################################################
-
-PIDFILE="$MAINPATH/wired-bot.pid"
-CONFIGFILE="$MAINPATH/config"
-BASHFILE="$MAINPATH/wired-bot.sh"
-
 HOSTNAME="localhost"
 PORT="4871"
 SOCKET="$MAINPATH/wired-bot.sock"
@@ -20,10 +14,13 @@ PASSWORD=""
 NICK="WireBot"
 STATUS="Type #help in chat"
 ICON="$MAINPATH/robo.png"
+WATCH_DIR=""  # Must be an absolute Hostsystem Path
+#####################################################
 
+PIDFILE="$MAINPATH/wired-bot.pid"
+BASHFILE="$MAINPATH/wired-bot.sh"
 
-# The path to your wirebot binary
-WIREBOT=$( SELF=$(dirname "$0") && bash -c "cd \"$SELF\" && pwd" )
+WIRED-BOT=$( SELF=$(dirname "$0") && bash -c "cd \"$SELF\" && pwd" )
 
 cd "$MAINPATH"
 
@@ -49,7 +46,7 @@ checkrunning() {
 	checkpid
 
 	if [ $RUNNING -eq 0 ]; then
-		echo "$PROG: $CMD: wirebot is not running"
+		echo "$PROG: $CMD: wired-bot is not running"
 		#exit 1
 	fi
 }
@@ -59,21 +56,21 @@ case $CMD in
 		checkpid
 
 		if [ $RUNNING -eq 1 ]; then
-			echo "$PROG: $CMD: wirebot (pid $PID) already running"
+			echo "$PROG: $CMD: wired-bot (pid $PID) already running"
 			exit 1
 		fi
 
-		if screen -Sdm wirebot ; then
+		if screen -Sdm wired-bot ; then
 			if [ ! -f venv ]; then
 				ln -s "$CLONED_REPO"/venv venv
 			fi
 			source venv/bin/activate
-			if python console_chat.py -D --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --socket "$SOCKET" --script "$SCRIPT" --watch-dir "/mnt/wired/files/00 Upload Folders/Mac"; then
+			if python console_chat.py -D --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --socket "$SOCKET" --script "$SCRIPT" --watch-dir "$WATCH_DIR"; then
 				echo "Wirebot started"
 			fi
 			deactivate
 			ps ax | grep -v grep | grep -v sleep | grep "console_chat.py -D" | xargs| sed 's/\ .*//g' > wired-bot.pid
-			screen -S wirebot -p 0 -X title "wirebot"
+			screen -S wired-bot -p 0 -X title "wired-bot"
 			#/bin/bash "$MAINPATH/wired-bot.sh" watcher_init
 			/bin/bash "$MAINPATH/wired-bot.sh" rssfeed_init
 			check_gpt=$( cat wired-bot.sh | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
@@ -81,19 +78,19 @@ case $CMD in
 			  /bin/bash "$MAINPATH/wired-bot.sh" tgpt_start
 			fi
 		else
-			echo "$PROG: $CMD: wirebot could not be started"
+			echo "$PROG: $CMD: wired-bot could not be started"
 		fi
 		;;
 
 	stop)
 		checkrunning
-		if screen -XS wirebot quit; then
+		if screen -XS wired-bot quit; then
 			if [ -f "$MAINPATH/rss.pid" ];then
 			  rm "$MAINPATH/rss.pid"
 			fi
-			echo "$PROG: $CMD: wirebot stopped"
+			echo "$PROG: $CMD: wired-bot stopped"
 		else
-			echo "$PROG: $CMD: wirebot could not be stopped"
+			echo "$PROG: $CMD: wired-bot could not be stopped"
 		fi
 		
 		if screen -XS tgpt quit; then
@@ -117,7 +114,7 @@ case $CMD in
 
 		if [ $RUNNING -eq 1 ]; then
 			echo ""
-			echo "$PROG: $CMD: wirebot is running on pid $PID"
+			echo "$PROG: $CMD: wired-bot is running on pid $PID"
 		fi
 
 		join_check=$( cat "$BASHFILE" | grep -v "sed" | grep "user_join=" | sed 's/.*=//g' )
@@ -139,10 +136,10 @@ case $CMD in
 	screen)
 		checkrunning
 
-		if screen -rS wirebot -p 0; then
+		if screen -rS wired-bot -p 0; then
 			echo "$PROG: $CMD: Entering screen session"
 		else
-			echo -e "\n$PROG: $CMD: wirebot is not running"
+			echo -e "\n$PROG: $CMD: wired-bot is not running"
 			#exit 1
 		fi
 		;;
@@ -151,13 +148,13 @@ case $CMD in
 		checkpid
 
 		if [ $RUNNING -eq 1 ]; then
-			if screen -ls | grep "wirebot" | cut -d. -f1 | awk '{print $1}' | xargs -I {} screen -S {} -X quit; then
+			if screen -ls | grep "wired-bot" | cut -d. -f1 | awk '{print $1}' | xargs -I {} screen -S {} -X quit; then
 				if [ -f "$MAINPATH/wired-bot.pid" ];then
 				  rm "$MAINPATH/wired-bot.pid"
 				fi
-				echo "$PROG: $CMD: wirebot stopped"
+				echo "$PROG: $CMD: wired-bot stopped"
 			else
-				echo "$PROG: $CMD: wirebot could not be stopped"
+				echo "$PROG: $CMD: wired-bot could not be stopped"
 				exit 1
 			fi
 		fi
@@ -165,11 +162,11 @@ case $CMD in
 		checkpid
 
 		if [ $RUNNING -eq 1 ]; then
-			echo "$PROG: $CMD: wirebot (pid $PID) already running"
+			echo "$PROG: $CMD: wired-bot (pid $PID) already running"
 			exit 1
 		fi
 
-		if screen -Sdm wirebot $WIREBOT/wirebot ; then
+		if screen -Sdm wired-bot $WIRED-BOT/wired-bot ; then
 			/bin/bash "$MAINPATH/wired-bot.sh" rssfeed_init
 			/bin/bash "$MAINPATH/wired-bot.sh" tgpt_stop
 			check_gpt=$( cat wired-bot.sh | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
@@ -177,7 +174,7 @@ case $CMD in
 			  /bin/bash "$MAINPATH/wired-bot.sh" tgpt_start
 			fi
 		else
-			echo "$PROG: $CMD: wirebot could not be started"
+			echo "$PROG: $CMD: wired-bot could not be started"
 		fi
 		;;
 
@@ -233,12 +230,12 @@ case $CMD in
 	*)
 		cat <<EOF
 
-Usage:  wirebotctl [COMMAND]
+Usage:  wired-botctl [COMMAND]
 
 	COMMAND:
-	start			Start wirebot
-	stop			Stop wirebot
-	restart			Restart wirebot
+	start			Start wired-bot
+	stop			Stop wired-bot
+	restart			Restart wired-bot
 	screen			Join screen session (To exit session press ctrl+a and than d)
 	watch/nowatch		Switch filewatching on/off
 	status			Show the status
