@@ -145,7 +145,7 @@ function rssfeed_init {
 
 function tgpt_start {
   if [ ! -f wired-tgpt.pid ]; then
-    screen -dmS wired-tgpt /opt/wired-bot/wired-tgpt -i -q --provider gemini --key "$gemini_key" -log /tmp/wired-tgpt.log
+    screen -dmS wired-tgpt ./wired-tgpt -i -q --provider gemini --key "$gemini_key" -log /tmp/wired-tgpt.log
     ps ax | grep -v grep | grep "tgpt -i -q --provider" | xargs| sed 's/\ .*//g' > wired-tgpt.pid
     echo "wired-tgpt started"
   else
