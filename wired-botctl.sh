@@ -66,7 +66,7 @@ case $CMD in
 			fi
 			source venv/bin/activate
 			if python wired_bot.py -D --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --socket "$SOCKET" --script "$SCRIPT" --watch-dir "$WATCH_DIR"; then
-				echo "Wirebot started"
+				echo "wire-bot started"
 			fi
 			deactivate
 			ps ax | grep -v grep | grep -v sleep | grep "wired_bot.py -D" | xargs| sed 's/\ .*//g' > wired-bot.pid
