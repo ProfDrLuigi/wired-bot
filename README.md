@@ -2,6 +2,8 @@
 
 This is a Wired 2.0(2.5) Python Bot based on docmeth02's wired-cli project (https://git.docmeth02.host/wired/wired-cli).
 
+You need Python 3 on your system to get it working.
+
 <details>
 <summary>
 <h2>
