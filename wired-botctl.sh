@@ -71,7 +71,6 @@ case $CMD in
 			deactivate
 			ps ax | grep -v grep | grep -v sleep | grep "wired_bot.py -D" | xargs| sed 's/\ .*//g' > wired-bot.pid
 			screen -S wired-bot -p 0 -X title "wired-bot"
-			#/bin/bash "$MAINPATH/wired-bot.sh" watcher_init
 			/bin/bash "$MAINPATH/wired-bot.sh" rssfeed_init
 			check_gpt=$( cat wired-bot.sh | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
 			if [ "$check_gpt" = "yes" ]; then
