@@ -26,6 +26,7 @@ imgbb_key="YOUR_FREE_IMGBB_KEY"
 ####################################################
 ################# RSS Feed On/Off ##################
 ####################################################
+rssfeed_autostart=yes
 rssfeed=0
 interval=5m
 ####################################################
@@ -43,8 +44,8 @@ SELF=$(SELF=$(dirname "$0") && bash -c "cd \"$SELF\" && pwd")
 cd "$SELF"
 
 function print_msg {
-  printf "$say" "%s\n/idle\n" | socat - UNIX-CONNECT:wired-bot.sock
-  #printf "$say" | socat - UNIX-CONNECT:wired-bot.sock
+  echo "$say" | socat - UNIX-CONNECT:wired-bot.sock
+  echo "/idle" | socat - UNIX-CONNECT:wired-bot.sock
 }
 
 function rnd_answer {
@@ -115,11 +116,9 @@ function rssfeed_def {
 }
 
 function rssfeed_start {
-  check=$( ps ax | grep -v grep | grep "./rss.sh" )
-  if [ "$check" = "" ]; then
-    screen -S wired-bot -x -X screen -t rss bash -c "bash "$SELF"/wired-bot.sh rssfeed_def; exec bash" &
-    sleep 2
-    ps ax | grep -v grep | grep -v sleep | grep "rssfeed_def; exec bash" | xargs| sed 's/\ .*//g' > rss.pid
+  if [ ! -f rss.pid ]; then
+    nohup ./rss.sh >/dev/null 2>&1 &
+    echo $! > rss.pid
     echo "RSS feed started"
   else
     echo "RSS feed is already running!"
@@ -131,9 +130,10 @@ function rssfeed_stop {
   if ! [ -f rss.pid ]; then
     echo "RSS feed is not running!"
   else
-    screen -S wired-bot -p "rss" -X kill
-    rm rss.pid
+    rss_pid=$( cat rss.pid )
+    kill -kill "$rss_pid"
     echo "RSS feed stopped"
+    rm rss.pid
   fi
 }
 
