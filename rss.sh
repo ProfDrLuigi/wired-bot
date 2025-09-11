@@ -16,12 +16,11 @@ function macrumors_rss {
 }
 
 function tarnkappe_rss {
-  mapfile -t lines < <(python tarnkappe.py)
-  title="${lines[0]}"
-  url="${lines[1]}"
-  descr="${lines[2]}"
-  url_title="${lines[3]}"
-  url_title=$( echo "$url_title" | sed -e 's/.*.html" rel="nofollow">//g' -e 's/<\/a>.*//g' )
+  feed_url="https://tarnkappe.info/feed"
+  xml=$(curl -s "$feed_url")
+  title=$(echo "$xml" | xmlstarlet sel -t -m "/rss/channel/item[1]" -v "title" -n)
+  link=$(echo "$xml" | xmlstarlet sel -t -m "/rss/channel/item[1]" -v "link" -n)
+  descr=$(echo "$xml" | xmlstarlet sel -t -m "/rss/channel/item[1]" -v "description" -n | xmlstarlet unesc)
   tarnkappe_say=$( echo -e "<div><b><u>+++ Tarnkappe Breaking News +++</b></u><br><b>""$title""</b><br>""$descr ""<a rel=nofollow href=""$url"">Zum Artikel</a>""</div>" | sed ':a;N;$!ba;s/\n//g' | sed -e 's/<p>//g' -e 's/<\/p>//g' )
 }
 
@@ -50,7 +49,8 @@ do
   if  [ "$macrumors_check" = "" ]; then
     if [ "$macrumors" = "1" ]; then
       macrumors_rss
-      echo "$macrumors_say" | socat - UNIX-CONNECT:wired-bot.sock 
+      echo "$macrumors_say" | socat - UNIX-CONNECT:wired-bot.sock
+      echo "/idle"| socat - UNIX-CONNECT:wired-bot.sock
       echo "$macrumors_now" >> rss.brain
     fi
   fi
@@ -58,7 +58,8 @@ do
   if  [ "$tarnkappe_check" = "" ]; then
     if [ "$tarnkappe" = "1" ]; then
       tarnkappe_rss
-      echo "$tarnkappe_say" | socat - UNIX-CONNECT:wired-bot.sock 
+      echo "$tarnkappe_say" | socat - UNIX-CONNECT:wired-bot.sock
+      echo "/idle"| socat - UNIX-CONNECT:wired-bot.sock
       echo "$tarnkappe_now" >> rss.brain
     fi
   fi
