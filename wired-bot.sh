@@ -288,6 +288,14 @@ fi
 
 }
 
+function norris_facts {
+  if [ "$command" = "!roundhouseme" ]; then
+ 	say=$( curl -s https://api.chucknorris.io/jokes/random | sed 's/^[[:space:]]*"[^"]*":[[:space:]]*//' | sed -e 's/.*":"//g' -e 's/"}//g' -e 's/\\//g' )
+ 	print_msg
+ 	exit
+  fi
+}
+
 function memes {
 
   if [ "$command" = ":hi:" ]; then
