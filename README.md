@@ -29,7 +29,12 @@ If you want the Watch-Dir function of the Bot you must install this Dependency t
 
 If you want the RSS Feed function of the Bot you must install this Dependency too:
 
-	pip3 install feedparser
+	xmlstarlet
+	
+Example for Debian/Ubuntu & macOS
+
+	sudo apt install xmlstarlet # Debian/Ubuntu
+ 	brew install xmlstarlet # macOS
 
 If you are done change into the wired-bot dir and fit 
 
