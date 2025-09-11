@@ -197,8 +197,8 @@ if [[ "$command" = "#"* ]]; then
 	  say="<div><b><u>Available Commands</b></u></br></br> \
 	  <u>Talk with Bot</u><span style=\"font-family:Courier\"><br># \"YOUR TEXT\"</span></br><br> \
 	  <u>Generate an image</u><span style=\"font-family:Courier\"><br>#p \"PICTURE DESCRIPTION\"</span></br><br> \
-	  <u>Chuck Norris fact</u><span style=\"font-family:Courier\"><br>!roundhouseme</span></br><br> \
 	  <u>Reset conversation</u><span style=\"font-family:Courier\"><br>#reset conversation</span></br><br> \
+	  <u>Chuck Norris fact</u><span style=\"font-family:Courier\"><br>!roundhouseme</span></br><br> \
 	  <u>Memes</u><span style=\"font-family:Courier\"><br>:hi: | :wow:</span></div>"
 	  print_msg
 	  exit
