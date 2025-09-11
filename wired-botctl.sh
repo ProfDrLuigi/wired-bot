@@ -58,7 +58,7 @@ case $CMD in
 		fi
 		
 		source venv/bin/activate
-		if python wired_bot.py -D --socket "$MAINPATH/wired-bot.sock" --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --script "wired-bot.sh" --watch-dir "$WATCH_DIR"; then
+		if python wired_bot.py -D --socket "$MAINPATH/wired-bot.sock" --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --script "$MAINPATH"/wired-bot.sh --watch-dir "$WATCH_DIR"; then
 			echo "wired-bot started"
 		else
 			echo "wired-bot could not be started"
@@ -67,12 +67,12 @@ case $CMD in
 		
 		ps ax | grep -v grep | grep "wired_bot.py -D" | xargs| sed 's/\ .*//g' > wired-bot.pid
 		check_gpt=$( cat "wired-bot.sh" | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
-		if [ "$check_gpt" = "yes" ]; then
+		if [ "$check_gpt" = 1 ]; then
 		  /bin/bash "wired-bot.sh" tgpt_start
 		fi
 		
 		check_rssfeed=$( cat "wired-bot.sh" | grep -w "rssfeed_autostart=*" | head -n 1 | sed 's/rssfeed_autostart=//g' )
-		if [ "$check_rssfeed" = "yes" ]; then
+		if [ "$check_rssfeed" = 1 ]; then
 		  /bin/bash "wired-bot.sh" rssfeed_start
 		fi
 
@@ -116,6 +116,8 @@ case $CMD in
 		leave_check=$( cat "wired-bot.sh" | grep -v "sed" | grep "user_leave=" | sed 's/.*=//g' )
 		wordfilter_check=$( cat "wired-bot.sh" | grep -v "sed" | grep "wordfilter=" | sed 's/.*=//g' )
 		common_reply_check=$( cat "wired-bot.sh" | grep -v "sed" | grep "common_reply=" | sed 's/.*=//g' )
+		rssfeed_check=$( cat "wired-bot.sh" | grep -v "sed" | grep "rssfeed=" | sed 's/.*=//g' )
+		gpt_check=$( cat "wired-bot.sh" | grep -v "sed" | grep "gpt=" | sed 's/.*=//g' )
 		admin_user_check=$( cat "wired-bot.sh" | grep -v "sed" | grep "admin_user=" | sed -e 's/.*=//g' -e 's/\"//g' )
 		echo ""
 		echo "Settings:"
@@ -124,6 +126,8 @@ case $CMD in
 		echo "User leave   =" "$leave_check"
 		echo "Wordfilter   =" "$wordfilter_check"
 		echo "Common reply =" "$common_reply_check"
+		echo "RSS feed     =" "$rssfeed_check"		
+		echo "GPT          =" "$gpt_check"		
 		echo "Admin user   =" "$admin_user_check"
 		echo ""
 		;;
