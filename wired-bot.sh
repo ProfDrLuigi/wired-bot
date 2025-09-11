@@ -13,7 +13,8 @@ common_reply=1
 ####################################################
 #################### GPT Stuff #####################
 ####################################################
-gpt_autostart=no
+gpt_autostart=yes
+gpt=0
 gemini_key="YOUR_FREE_GEMINI_API_KEY"
 ####################################################
 
@@ -97,29 +98,18 @@ else
   command=$(echo "$1" | awk -F' \\|\\|\\| ' '{print $3}')
 fi
 
-function kill_screen {
-  if [ -f wired-bot.stop ]; then
-    rm wired-bot.stop
-  fi
-  if [ -f wired-bot.pid ]; then
-    rm wired-bot.pid
-  fi
-  if [ -f rss.pid ]; then
-    rm rss.pid
-  fi
-  screen -ls | grep "wired-bot" | cut -d. -f1 | awk '{print $1}' | xargs -I {} screen -S {} -X quit
-  pkill -f wired-bot
-}
-
 function rssfeed_def {
   ./rss.sh
 }
 
 function rssfeed_start {
   if [ ! -f rss.pid ]; then
-    nohup ./rss.sh >/dev/null 2>&1 &
-    echo $! > rss.pid
-    echo "RSS feed started"
+  	rssfeed_enabled=$( cat "wired-bot.sh" | grep -v "sed" | grep "rssfeed=" | sed 's/.*=//g' )
+  	if [ "$rssfeed_enabled" = 1 ]; then
+      nohup ./rss.sh >/dev/null 2>&1 &
+      echo $! > rss.pid
+      echo "RSS feed started"
+    fi
   else
     echo "RSS feed is already running!"
     exit
@@ -137,17 +127,14 @@ function rssfeed_stop {
   fi
 }
 
-function rssfeed_init {
-  if [ "$rssfeed" = 1 ]; then
-    rssfeed_start
-  fi
-}
-
 function tgpt_start {
   if [ ! -f wired-tgpt.pid ]; then
-    screen -dmS wired-tgpt ./wired-tgpt -i -q --provider gemini --key "$gemini_key" -log /tmp/wired-tgpt.log
-    ps ax | grep -v grep | grep "tgpt -i -q --provider" | xargs| sed 's/\ .*//g' > wired-tgpt.pid
-    echo "wired-tgpt started"
+    tgpt_enabled=$( cat "wired-bot.sh" | grep -v "sed" | grep "gpt=" | sed 's/.*=//g' )
+    if [ "$tgpt_enabled" = 1 ]; then
+      screen -dmS wired-tgpt ./wired-tgpt -i -q --provider gemini --key "$gemini_key" -log /tmp/wired-tgpt.log
+      ps ax | grep -v grep | grep "tgpt -i -q --provider" | xargs| sed 's/\ .*//g' > wired-tgpt.pid
+      echo "wired-tgpt started"
+    fi
   else
     echo "wired-tgpt is already running!"
   fi
@@ -400,11 +387,6 @@ if [ "$command" = "!userleave off" ]; then
   say="Yes sir. 🙂"
   print_msg
 fi 
-
-if [ "$command" = "!kill_screen" ]; then
-  say="Cya."
-  kill_screen
-fi
 
 if [ -f wired-bot.stop ]; then
   if [ "$command" = "!start" ]; then
