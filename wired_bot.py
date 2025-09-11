@@ -43,7 +43,6 @@ try:
 except ImportError:
     WATCHDOG_AVAILABLE = False
 
-
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
@@ -87,7 +86,7 @@ def daemonize() -> None:
     except Exception:
         # Best-effort; ignore if /dev/null unavailable
         pass
-
+        
 
 class WiredFileHandler(FileSystemEventHandler):
     """Handles file system events and sends file contents to Wired chat."""
@@ -121,8 +120,8 @@ class WiredFileHandler(FileSystemEventHandler):
             if file_path.name.startswith("runc-process"):
                 return
 
-            # Send line
-            line = f"{self.prefix}[New File available: {file_path.name}]"
+            # Send filename to chat
+            line = f"{self.prefix}[File: {file_path.name}]"
             try:
                 self.conn.send_chat_say(self.chat_id, line)
             except Exception as e:
@@ -145,7 +144,7 @@ class WiredFileHandler(FileSystemEventHandler):
             self.process_file(event.src_path)
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Wired 2.0 console chat listener with watchdog support")
+    parser = argparse.ArgumentParser(description="Wired 2.0 console chat listener")
     parser.add_argument("--host", default="127.0.0.1", help="Server host")
     parser.add_argument("--port", type=int, default=4871, help="Server port")
     # Accept both --user and --username for consistency with the TUI client
@@ -161,7 +160,6 @@ def main() -> int:
         default=None,
         help="Path to a Unix domain socket. Text written to this socket is sent to public chat (ID 1).",
     )
-    
     parser.add_argument("--watch-dir", default=None, help="Directory to watch for new files")
     
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
@@ -190,6 +188,11 @@ def main() -> int:
     conn.request_encryption = True
     conn.request_checksum = True
     conn.interactive = False
+    # Suppress note-only (<n>...</n>) chat messages from output
+    try:
+        conn.filter_note_messages = True  # type: ignore[attr-defined]
+    except Exception:
+        pass
 
     # Simple caches
     users: Dict[int, str] = {}  # uid -> nick (best effort, from user list events)
@@ -352,6 +355,15 @@ def main() -> int:
                     eprint(f"[ERROR] Failed to execute script: {e}")
 
     conn.on_chat_say = on_chat_say
+
+    # Ignore note/image events entirely in this console example
+    try:
+        def on_chat_note(chat_id: int, user_id: int, notes, message):
+            # Intentionally do nothing; messages are filtered above
+            return
+        conn.on_chat_note = on_chat_note  # type: ignore[attr-defined]
+    except Exception:
+        pass
 
     def on_chat_me(chat_id: int, user_id: int, text: str):
         # Only process public chat (ID 1)
@@ -517,6 +529,7 @@ def main() -> int:
         eprint(f"[WATCHDOG] Watching directory: {watch_path}")
 
     # If --socket is provided, spin up a background Unix domain socket server
+
     def socket_server(path: str):
         srv = None
         try:
@@ -620,10 +633,6 @@ def main() -> int:
         # Stop socket thread and cleanup
         try:
             stop_event.set()
-            # Stop watchdog observer if running
-            if observer and observer.is_alive():
-                observer.stop()
-                observer.join(timeout=2.0)
             # Also stop resolver thread
             if resolver_thread and resolver_thread.is_alive():
                 resolver_thread.join(timeout=2.0)
