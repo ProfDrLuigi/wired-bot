@@ -131,17 +131,6 @@ case $CMD in
 		echo "Admin user   =" "$admin_user_check"
 		echo ""
 		;;
-
-	screen)
-		checkrunning
-
-		if screen -rS wired-bot -p 0; then
-			echo "$PROG: $CMD: Entering screen session"
-		else
-			echo -e "\n$PROG: $CMD: wired-bot is not running"
-			#exit 1
-		fi
-		;;
 	
 	join_on)
 		/bin/bash "wired-bot.sh" user_join_on
