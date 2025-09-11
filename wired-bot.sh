@@ -194,12 +194,16 @@ function tgpt {
 
 if [[ "$command" = "#"* ]]; then
 	if [[ "$command" = "#help" ]]; then
-	  say="<div><b><u>Available Commands</b></u></br></br> \
-	  <u>Talk with Bot</u><span style=\"font-family:Courier\"><br># \"YOUR TEXT\"</span></br><br> \
-	  <u>Generate an image</u><span style=\"font-family:Courier\"><br>#p \"PICTURE DESCRIPTION\"</span></br><br> \
-	  <u>Reset conversation</u><span style=\"font-family:Courier\"><br>#reset conversation</span></br><br> \
-	  <u>Chuck Norris fact</u><span style=\"font-family:Courier\"><br>!roundhouseme</span></br><br> \
-	  <u>Memes</u><span style=\"font-family:Courier\"><br>:hi: | :wow:</span></div>"
+	  say="<div><b><u><center>Available Commands</center></u></b><br> \
+		   <table border=\"1\" cellspacing=\"5\" cellpadding=\"5\" style=\"text-align:center;\"> \
+		   <tr><td><u>Talk with Bot</u><br><span style=\"font-family:Courier\"># \"YOUR TEXT\"</span></td> \
+		   <td><u>Generate an image</u><br><span style=\"font-family:Courier\">#p \"PICTURE DESCRIPTION\"</span></td> \
+		   <td><u>Reset conversation</u><br><span style=\"font-family:Courier\">#reset conversation</span></td></tr> \
+		   </table><br> \
+		   <table border=\"1\" cellspacing=\"5\" cellpadding=\"5\" style=\"text-align:center;\"> \
+		   <tr><td><u>Chuck Norris fact</u><br><span style=\"font-family:Courier\">!roundhouseme</span></td> \
+		   <td><u>Memes</u><br><span style=\"font-family:Courier\">:hi: | :wow:</span></td></tr> \
+		   </table></div>"
 	  print_msg
 	  exit
 	
