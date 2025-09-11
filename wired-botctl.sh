@@ -15,13 +15,6 @@ ICON="$MAINPATH/robo.png"
 WATCH_DIR=""  # Must be an absolute Hostsystem Path
 #####################################################
 
-#### Do not touch! ####
-PIDFILE="$MAINPATH/wired-bot.pid"
-BASHFILE="$MAINPATH/wired-bot.sh"
-####
-
-WIREDBOT=$( SELF=$(dirname "$0") && bash -c "cd \"$SELF\" && pwd" )
-
 cd "$MAINPATH"
 
 # Begin script
@@ -31,8 +24,8 @@ CMD=$1
 checkpid() {
 	RUNNING=0
 
-	if [ -f $PIDFILE ]; then
-		PID=`cat $PIDFILE`
+	if [ -f wired-bot.pid ]; then
+		PID=`cat wired-bot.pid`
 
 		if [ "x$PID" != "x" ]; then
 			if kill -0 $PID 2>/dev/null ; then
@@ -65,7 +58,7 @@ case $CMD in
 		fi
 		
 		source venv/bin/activate
-		if python wired_bot.py -D --socket "$MAINPATH/wired-bot.sock" --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --script "$BASHFILE" --watch-dir "$WATCH_DIR"; then
+		if python wired_bot.py -D --socket "$MAINPATH/wired-bot.sock" --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --script "wired-bot.sh" --watch-dir "$WATCH_DIR"; then
 			echo "wired-bot started"
 		else
 			echo "wired-bot could not be started"
@@ -73,14 +66,14 @@ case $CMD in
 		deactivate
 		
 		ps ax | grep -v grep | grep "wired_bot.py -D" | xargs| sed 's/\ .*//g' > wired-bot.pid
-		check_gpt=$( cat "$BASHFILE" | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
+		check_gpt=$( cat "wired-bot.sh" | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
 		if [ "$check_gpt" = "yes" ]; then
-		  /bin/bash "$BASHFILE" tgpt_start
+		  /bin/bash "wired-bot.sh" tgpt_start
 		fi
 		
-		check_rssfeed=$( cat "$BASHFILE" | grep -w "rssfeed_autostart=*" | head -n 1 | sed 's/rssfeed_autostart=//g' )
+		check_rssfeed=$( cat "wired-bot.sh" | grep -w "rssfeed_autostart=*" | head -n 1 | sed 's/rssfeed_autostart=//g' )
 		if [ "$check_rssfeed" = "yes" ]; then
-		  /bin/bash "$BASHFILE" rssfeed_start
+		  /bin/bash "wired-bot.sh" rssfeed_start
 		fi
 
 		;;
@@ -119,11 +112,11 @@ case $CMD in
 			echo "$PROG: $CMD: wired-bot is running on pid $PID"
 		fi
 
-		join_check=$( cat "$BASHFILE" | grep -v "sed" | grep "user_join=" | sed 's/.*=//g' )
-		leave_check=$( cat "$BASHFILE" | grep -v "sed" | grep "user_leave=" | sed 's/.*=//g' )
-		wordfilter_check=$( cat "$BASHFILE" | grep -v "sed" | grep "wordfilter=" | sed 's/.*=//g' )
-		common_reply_check=$( cat "$BASHFILE" | grep -v "sed" | grep "common_reply=" | sed 's/.*=//g' )
-		admin_user_check=$( cat "$BASHFILE" | grep -v "sed" | grep "admin_user=" | sed -e 's/.*=//g' -e 's/\"//g' )
+		join_check=$( cat "wired-bot.sh" | grep -v "sed" | grep "user_join=" | sed 's/.*=//g' )
+		leave_check=$( cat "wired-bot.sh" | grep -v "sed" | grep "user_leave=" | sed 's/.*=//g' )
+		wordfilter_check=$( cat "wired-bot.sh" | grep -v "sed" | grep "wordfilter=" | sed 's/.*=//g' )
+		common_reply_check=$( cat "wired-bot.sh" | grep -v "sed" | grep "common_reply=" | sed 's/.*=//g' )
+		admin_user_check=$( cat "wired-bot.sh" | grep -v "sed" | grep "admin_user=" | sed -e 's/.*=//g' -e 's/\"//g' )
 		echo ""
 		echo "Settings:"
 		echo ""
@@ -151,49 +144,49 @@ case $CMD in
 		;;
 	
 	join_on)
-		/bin/bash "$BASHFILE" user_join_on
+		/bin/bash "wired-bot.sh" user_join_on
 		;;
 
 	join_off)
-		/bin/bash "$BASHFILE" user_join_off
+		/bin/bash "wired-bot.sh" user_join_off
 		;;
 
 	leave_on)
-		/bin/bash "$BASHFILE" user_leave_on
+		/bin/bash "wired-bot.sh" user_leave_on
 		;;
 
 	leave_off)
-		/bin/bash "$BASHFILE" user_leave_off
+		/bin/bash "wired-bot.sh" user_leave_off
 		;;
 
 	wordfilter_on)
-		/bin/bash "$BASHFILE" wordfilter_on
+		/bin/bash "wired-bot.sh" wordfilter_on
 		;;
 
 	wordfilter_off)
-		/bin/bash "$BASHFILE" wordfilter_off
+		/bin/bash "wired-bot.sh" wordfilter_off
 		;;
 
 	common_reply_on)
-		/bin/bash "$BASHFILE" common_reply_on
+		/bin/bash "wired-bot.sh" common_reply_on
 		;;
 
 	common_reply_off)
-		/bin/bash "$BASHFILE" common_reply_off
+		/bin/bash "wired-bot.sh" common_reply_off
 		;;
 
 	rss_on)
-		/bin/bash "$BASHFILE" rssfeed_start
+		/bin/bash "wired-bot.sh" rssfeed_start
 		;;
 
 	rss_off)
-		/bin/bash "$BASHFILE" rssfeed_stop
+		/bin/bash "wired-bot.sh" rssfeed_stop
 		;;
 	gpt_on)
-		/bin/bash "$BASHFILE" tgpt_start
+		/bin/bash "wired-bot.sh" tgpt_start
 		;;
 	gpt_off)
-		/bin/bash "$BASHFILE" tgpt_stop
+		/bin/bash "wired-bot.sh" tgpt_stop
 		;;
 	*)
 		cat <<EOF
