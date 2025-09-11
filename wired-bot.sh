@@ -383,28 +383,6 @@ if [ "$command" = "!userleave off" ]; then
   print_msg
 fi 
 
-if [ -f wired-bot.stop ]; then
-  if [ "$command" = "!start" ]; then
-    rm wired-bot.stop
-  elif [ "$command" = "!stop" ]; then
-    say="/idle"
-    print_msg
-    exit
-  else
-    exit
-  fi
-elif [ ! -f wired-bot.stop ]; then
-  if [ "$command" = "!start" ]; then
-    exit
-  fi
-fi
-
-if [[ "$command" == *"Using timestamp"* ]]; then
-  if [ -f wired-bot.stop ]; then
-    rm wired-bot.stop
-  fi
-fi
-
 }
 
 tgpt
