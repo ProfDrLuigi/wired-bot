@@ -41,13 +41,13 @@ If you are done change into the wired-bot dir and fit
 	wired-bot.sh
 and
 
-	wired-botctl.sh 
+	botctl.sh 
 
 to your needs.
 
 At the end you can start the bot with:
 
-    ./wired-botctl start
+    ./botctl start
 
 </details>
 
@@ -103,7 +103,7 @@ Filewatcher
 </h2>
 </summary>
 
-To change the Path of the folder which should be watched change the corresponding option in wired-botctl.sh
+To change the Path of the folder which should be watched change the corresponding option in botctl.sh
 
 </details>
 
@@ -141,7 +141,7 @@ Controlling the bot
 </h2>
 </summary>
 
-	Usage:  wired-botctl [COMMAND]
+	Usage:  botctl [COMMAND]
 
 	COMMAND:
 	start			Start wirebot
