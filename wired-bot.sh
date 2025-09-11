@@ -335,8 +335,6 @@ if [ "$command" = "!stop" ]; then
   answ[0]="Ping me when you need me. 🙂"
   answ[1]="I jump ❗"
   rnd_answer
-  say="/idle"
-  print_msg
   touch wired-bot.stop
 fi
 if [ "$command" = "!gpt start" ]; then
@@ -360,7 +358,6 @@ if [ "$command" = "!gpt restart" ]; then
   answ[0]="Yes sir. 🙂"
   answ[1]="I will do that ❗"
   rnd_answer
-  rm gpt.busy
   tgpt_stop
   tgpt_start
 fi
