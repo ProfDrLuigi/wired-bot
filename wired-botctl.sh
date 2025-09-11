@@ -60,59 +60,57 @@ case $CMD in
 			exit 1
 		fi
 
-		if screen -Sdm wired-bot ; then
-			if [ ! -d venv ]; then
-				ln -s "$CLONED_CLI_REPO"/venv venv
-			fi
-			source venv/bin/activate
-			if python wired_bot.py -D --socket "$MAINPATH/wired-bot.sock" --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --script "$BASHFILE" --watch-dir "$WATCH_DIR"; then
-				echo "wire-bot started"
-			fi
-			deactivate
-			ps ax | grep -v grep | grep -v sleep | grep "wired_bot.py -D" | xargs| sed 's/\ .*//g' > wired-bot.pid
-			screen -S wired-bot -p 0 -X title "wired-bot"
-			/bin/bash "$MAINPATH/wired-bot.sh" rssfeed_init
-			check_gpt=$( cat wired-bot.sh | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
-			if [ "$check_gpt" = "yes" ]; then
-			  /bin/bash "$MAINPATH/wired-bot.sh" tgpt_start
-			fi
-		else
-			echo "$PROG: $CMD: wired-bot could not be started"
+		if [ ! -d venv ]; then
+			ln -s "$CLONED_CLI_REPO"/venv venv
 		fi
+		
+		source venv/bin/activate
+		if python wired_bot.py -D --socket "$MAINPATH/wired-bot.sock" --host "$HOSTNAME" --icon "$ICON" --port "$PORT" --user "$LOGIN" --password "$PASSWORD" --nick "$NICK" --status "$STATUS" --script "$BASHFILE" --watch-dir "$WATCH_DIR"; then
+			echo "wired-bot started"
+		else
+			echo "wired-bot could not be started"
+		fi
+		deactivate
+		
+		ps ax | grep -v grep | grep "wired_bot.py -D" | xargs| sed 's/\ .*//g' > wired-bot.pid
+		check_gpt=$( cat "$BASHFILE" | grep -w "gpt_autostart=*" | head -n 1 | sed 's/gpt_autostart=//g' )
+		if [ "$check_gpt" = "yes" ]; then
+		  /bin/bash "$BASHFILE" tgpt_start
+		fi
+		
+		check_rssfeed=$( cat "$BASHFILE" | grep -w "rssfeed_autostart=*" | head -n 1 | sed 's/rssfeed_autostart=//g' )
+		if [ "$check_rssfeed" = "yes" ]; then
+		  /bin/bash "$BASHFILE" rssfeed_start
+		fi
+
 		;;
 
 	stop)
 		checkrunning
-		if screen -XS wired-bot quit; then
-			if [ -f "$MAINPATH/rss.pid" ];then
-			  rm "$MAINPATH/rss.pid"
-			fi
-			if [ -f "$MAINPATH/wired-bot.pid" ];then
-			  wb_pid=$( cat wired-bot.pid )
-			  rm "$MAINPATH/wired-bot.pid"
-			  kill -kill "$wb_pid"
-			fi
-			echo "$PROG: $CMD: wired-bot stopped"
-		else
-			echo "$PROG: $CMD: wired-bot could not be stopped"
+		
+		if [ -f wired-bot.pid ]; then
+		  wb_pid=$( cat wired-bot.pid )
+		  kill -kill "$wb_pid"
+		  rm wired-bot.pid
+		  echo "wired-bot stopped"
 		fi
 		
-		if screen -XS wired-tgpt quit; then
-			if [ -f "$MAINPATH/wired-tgpt.pid" ];then
-				rm "$MAINPATH/wired-tgpt.pid"
-			fi	
-			echo "$PROG: $CMD: wired-tgpt stopped"
-		else
-			echo "$PROG: $CMD: wired-tgpt could not be stopped"
-		fi
-		
-		if [ -f "$MAINPATH/wired-bot.pid" ];then
-			kill -KILL $(cat wired-bot.pid)
-		    rm "$MAINPATH/wired-bot.pid"
-		fi
-		
-		
+		if [ -f rss.pid ]; then
+		  rss_pid=$( cat rss.pid )
+    	  kill -kill "$rss_pid"
+    	  rm rss.pid
+		  echo "RSS feed stopped"
+    	fi
+    	
+    	if [ -f wired-tgpt.pid ]; then
+		  tgpt_pid=$( cat wired-tgpt.pid )
+    	  screen -XS wired-tgpt quit
+    	  rm wired-tgpt.pid
+		  echo "wired-tgpt stopped"
+    	fi
+
 		;;
+
 	status)
 		checkpid
 
