@@ -200,7 +200,6 @@ Usage:  wired-botctl [COMMAND]
 	COMMAND:
 	start			Start wired-bot
 	stop			Stop wired-bot
-	watch/nowatch		Switch filewatching on/off
 	status			Show the status
 	config			Show the configuration
 	
