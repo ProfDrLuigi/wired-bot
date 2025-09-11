@@ -191,7 +191,7 @@ case $CMD in
 	*)
 		cat <<EOF
 
-Usage:  wired-botctl [COMMAND]
+Usage:  botctl [COMMAND]
 
 	COMMAND:
 	start			Start wired-bot
@@ -217,7 +217,6 @@ Usage:  wired-botctl [COMMAND]
 	gpt_off			Deactivate tgpt
 
 By Prof. Dr. Luigi 
-Original by Rafaël Warnault <dev@read-write.fr>
 
 EOF
 		;;
