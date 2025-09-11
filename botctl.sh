@@ -104,7 +104,7 @@ case $CMD in
 
 		;;
 
-	status)
+	config)
 		checkpid
 
 		if [ $RUNNING -eq 1 ]; then
@@ -141,10 +141,6 @@ case $CMD in
 			echo -e "\n$PROG: $CMD: wired-bot is not running"
 			#exit 1
 		fi
-		;;
-
-	config)
-		grep -v "^#" $CONFIGFILE | grep -v "^$" | sort
 		;;
 	
 	join_on)
@@ -200,7 +196,6 @@ Usage:  wired-botctl [COMMAND]
 	COMMAND:
 	start			Start wired-bot
 	stop			Stop wired-bot
-	status			Show the status
 	config			Show the configuration
 	
 	join_on			Activate greeting if user joined server
