@@ -324,8 +324,6 @@ if [ "$command" = "!sleep" ]; then
   answ[0]="💤"
   answ[1]=":sleeping: … Time for a nap."
   rnd_answer
-  say="/idle"
-  print_msg
 fi
 if [ "$command" = "!start" ]; then
   answ[0]="Yes, my lord."
