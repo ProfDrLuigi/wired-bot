@@ -171,6 +171,7 @@ Controlling the bot
 
 Your wired-bot directory should now looks like this:
 
-<img width="565" height="125" alt="image" src="https://github.com/user-attachments/assets/48ba9916-36b1-4fa5-b1d2-bf8df8163944" />
+<img width="567" height="125" alt="image" src="https://github.com/user-attachments/assets/8835a272-3f01-40e4-b813-dba13871c750" />
+
 
 
