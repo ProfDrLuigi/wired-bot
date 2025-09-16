@@ -64,7 +64,7 @@ GPT
  	https://go.dev/dl
 Compile my modified version of the original tgpt version (https://github.com/aandrew-me/tgpt)
  	
-  	git clone https://github.com/ProfDrLuigi/wired-tgpt
+  	git clone --branch wired-bot --single-branch https://github.com/ProfDrLuigi/tgpt
  	cd wired-tgpt
   	bash build.sh  	
 Rename your desired binary in the build folder to 
