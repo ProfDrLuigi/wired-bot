@@ -65,7 +65,7 @@ GPT
 Compile my modified version of the original tgpt version (https://github.com/aandrew-me/tgpt)
  	
   	git clone --branch wired-bot --single-branch https://github.com/ProfDrLuigi/tgpt
- 	cd wired-tgpt
+ 	cd tgpt
   	bash build.sh  	
 Rename your desired binary in the build folder to 
 
